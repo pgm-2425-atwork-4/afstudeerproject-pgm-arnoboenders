@@ -1,0 +1,48 @@
+/* Default Navigation (Absolute Over Hero) */
+.nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: transparent; /* Transparent so hero is visible behind */
+  z-index: 50;
+  transition: background-color 0.3s ease-in-out;
+}
+
+/* Desktop Navigation Links */
+.navLinks {
+  gap: 1.5rem;
+  display: flex;
+}
+
+/* Mobile Menu Button */
+.menuButton {
+  display: block;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Mobile Menu (Hidden by Default) */
+.mobileMenu {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+/* Mobile Menu Open */
+.mobileOpen {
+  max-height: 300px; /* Adjust based on your menu content */
+  opacity: 1;
+}
+
+/* Push Hero Down When Open */
+.heroSpacer {
+  height: 0px; /* Default navbar height */
+  transition: height 0.3s ease-in-out;
+}
+
+.heroPushed {
+  height: 25rem; /* Adjust to match menu height */
+}
