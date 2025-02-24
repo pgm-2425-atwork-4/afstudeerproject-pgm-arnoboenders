@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import Button from "@/components/Button";
 
 interface MobileNavProps {
   closeMenu: () => void;
@@ -23,9 +22,6 @@ export default function MobileNav({ closeMenu }: MobileNavProps) {
       </Link>
       <Link className="text-black text-lg" href="/contact" onClick={closeMenu}>
         Contact
-      </Link>
-      <Link href="/order" onClick={closeMenu}>
-        <Button text="Bestel nu" />
       </Link>
     </div>
   );
