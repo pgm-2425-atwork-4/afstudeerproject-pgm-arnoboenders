@@ -1,0 +1,52 @@
+.heroContainer {
+  width: 100%;
+  min-height: 50vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: -1; /* Keeps it behind the navbar */
+  margin-top: 0; /* Navbar will overlap */
+  transition: margin-top 0.3s ease-in-out;
+}
+
+/* When nav opens, push hero down */
+.heroContainer.open {
+  margin-top: 220px; /* Adjust as needed */
+}
+
+.heroContainer img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1; /* Ensures text stays above the image */
+  padding-left: 10rem;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.heroButton {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  color: white;
+  background-color: #0070f3;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.heroButton:hover {
+  background-color: #005bb5;
+}
