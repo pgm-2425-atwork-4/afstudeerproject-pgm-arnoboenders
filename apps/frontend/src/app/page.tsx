@@ -3,6 +3,7 @@ import styles from "./styles/hero.module.css";
 import Button from "@components/Button";
 import Link from "next/link";
 import { BookText, Utensils } from "lucide-react";
+import ItemCard from "@/components/menu-items/ItemCard";
 
 export default function Home() {
   return (
@@ -24,19 +25,28 @@ export default function Home() {
       <div className="container mx-auto my-10">
         <h2>Nieuw deze maand</h2>
 
-        <div className="grid grid-cols-3 gap-4 overflow-scroll lg:overflow-hidden">
-          <div>
-            <h3>item 1</h3>
-            <p>ingredients</p>
-          </div>
-          <div>
-            <h3>item 2</h3>
-            <p>ingredients</p>
-          </div>
-          <div>
-            <h3>item 3</h3>
-            <p>ingredients</p>
-          </div>
+        <div className="grid grid-cols-3 gap-4">
+          <ItemCard
+            item={{
+              name: "Pasta Carbonara",
+              image: "/Loos_logo_dark.png",
+              ingredients: "Pasta, eieren, spek, kaas",
+            }}
+          />
+          <ItemCard
+            item={{
+              name: "Pasta Bolognese",
+              image: "/Loos_logo_dark.png",
+              ingredients: "Pasta, gehakt, tomatensaus",
+            }}
+          />
+          <ItemCard
+            item={{
+              name: "Pasta Pesto",
+              image: "/Loos_logo_dark.png",
+              ingredients: "Pasta, basilicum, pijnboompitten",
+            }}
+          />
         </div>
         <div className="flex justify-center my-10">
           <Button text="Bestel nu" icon={<Utensils />} />
