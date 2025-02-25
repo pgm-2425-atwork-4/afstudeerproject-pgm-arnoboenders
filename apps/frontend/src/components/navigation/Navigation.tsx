@@ -50,14 +50,14 @@ export default function Navigation() {
           </div>
 
           {/* Right Section - Order Button & Mobile Menu */}
-          <div className="flex items-center gap-4 sm:gap-6 flex-shrink-0 px-4 relative">
+          <div className="flex items-center gap-4 sm:gap-6 flex-shrink-0 sm:px-4 relative">
             <Link href="/order">
               <Button text="Bestel nu" />
             </Link>
 
             {/* Mobile Menu Button */}
             <button
-              className={`${styles.menuButton} md:hidden p-3 rounded-md`}
+              className={`${styles.menuButton} md:hidden sm:p-3 rounded-md`}
               onClick={() => setIsOpen(!isOpen)}
               aria-label="Toggle navigation menu"
             >

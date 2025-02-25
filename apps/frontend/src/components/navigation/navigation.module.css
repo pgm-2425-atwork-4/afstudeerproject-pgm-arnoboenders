@@ -1,10 +1,9 @@
 /* Default Navigation (Absolute Over Hero) */
 .nav {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  background-color: transparent; /* Transparent so hero is visible behind */
   z-index: 50;
   transition: background-color 0.3s ease-in-out, padding 0.3s ease-in-out;
 }
@@ -51,5 +50,6 @@
 }
 
 .heroPushed {
-  height: 18rem;
+  height: 24rem;
 }
+
