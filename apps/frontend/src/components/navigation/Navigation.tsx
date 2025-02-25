@@ -24,7 +24,7 @@ export default function Navigation() {
   }, []);
   return (
     <>
-      <nav className={`${styles.nav} ${isOpen ? styles.open : ""} px-20 my-8`}>
+      <nav className={`${styles.nav} ${isOpen ? styles.open : ""} sm:px-20 my-8`}>
         <div className="flex justify-between items-center gap-10 ">
           <div className="flex items-center gap-10">
             {/* Logo */}
