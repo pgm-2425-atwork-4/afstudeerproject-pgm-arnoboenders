@@ -51,7 +51,7 @@ export default function Navigation() {
 
           {/* Right Section - Order Button & Mobile Menu */}
           <div className="flex items-center gap-4 sm:gap-6 flex-shrink-0 px-4 relative">
-            <Link href="/order" className="min-w-[120px] md:min-w-[150px]">
+            <Link href="/order">
               <Button text="Bestel nu" />
             </Link>
 
