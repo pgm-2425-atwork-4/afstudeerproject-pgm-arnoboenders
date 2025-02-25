@@ -93,6 +93,9 @@ interface NavLinksProps {
 
 const NavLinks = ({ pathname }: NavLinksProps) => (
   <div className="flex gap-4 sm:gap-6">
+    <Link className={getNavClass(pathname)} href="/menu">
+      Menu
+    </Link>
     <Link className={getNavClass(pathname)} href="/about">
       Over ons
     </Link>
@@ -104,9 +107,6 @@ const NavLinks = ({ pathname }: NavLinksProps) => (
     </Link>
     <Link className={getNavClass(pathname)} href="/contact">
       Contact
-    </Link>
-    <Link className={getNavClass(pathname)} href="/menu">
-      Menu
     </Link>
   </div>
 );
