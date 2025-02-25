@@ -21,10 +21,10 @@ export default function Home() {
           </Link>
         </div>
       </div>
-      <div className="container mx-auto my-10 lg:mx-28">
+      <div className="container mx-auto my-10">
         <h2>Nieuw deze maand</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4 overflow-scroll lg:overflow-hidden">
           <div>
             <h3>item 1</h3>
             <p>ingredients</p>
@@ -41,12 +41,13 @@ export default function Home() {
         <div className="flex justify-center my-10">
           <Button text="Bestel nu" icon={<Utensils />} />
         </div>
-        <div className="flex flex-col lg:flex-row items-center justify-between mb-8">
+        <div className="flex flex-col lg:flex-row items-center justify-between mb-8 gap-8 lg:gap-0">
           <Image
             src="/assets/homeImg1.png"
             alt="Foto interieur"
             width={300}
             height={300}
+            className="shadow-xl"
           />
           <p className="max-w-md">
             🧑‍🍳 Eerlijke pasta, pure smaak Bij Loos draait alles om eenvoud en
@@ -57,7 +58,7 @@ export default function Home() {
             </Link>
           </p>
         </div>
-        <div className="flex flex-col-reverse lg:flex-row items-center justify-between">
+        <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-8 lg:gap-0">
           <p className="max-w-md">
             📍 Geen reservatie nodig Loop gewoon binnen en geniet. Voor groepen
             vanaf 6 personen kan je wel reserveren.
@@ -67,50 +68,54 @@ export default function Home() {
             alt="Foto interieur"
             width={300}
             height={300}
+            className="shadow-xl"
           />
         </div>
-        <div className="flex flex-col-reverse lg:flex-row items-center justify-between mt-8">
+        <div className="flex flex-col-reverse lg:flex-row items-center justify-between mt-8 gap-8 lg:gap-0">
           <Image
             src="/assets/homeImg1.png"
             alt="Foto interieur"
             width={300}
             height={300}
+            className="shadow-xl"
           />
           <div>
             <h2>Openingsuren</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <p>Maandag:</p>
-              <p>Gesloten</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <p>Dinsdag:</p>
-              <p>11:30 - 14:00</p>
-              <p>17:30 - 21:30</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <p>Woensdag:</p>
-              <p>09:00 - 13:30 (bar)</p>
-              <p>17:30 - 21:30</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <p>Donderdag:</p>
-              <p>11:30 - 14:00</p>
-              <p>17:30 - 21:30</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <p>Vrijdag:</p>
-              <p>11:30 - 14:00</p>
-              <p>17:30 - 22:00</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <p>Zaterdag:</p>
-              <p>-</p>
-              <p>17:30 - 22:00</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <p>Zondag:</p>
-              <p>-</p>
-              <p>17:00 - 21:00</p>
+            <div className="text-sm">
+              <div className="grid grid-cols-3 gap-4">
+                <p>Maandag:</p>
+                <p>Gesloten</p>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <p>Dinsdag:</p>
+                <p>11:30 - 14:00</p>
+                <p>17:30 - 21:30</p>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <p>Woensdag:</p>
+                <p>09:00 - 13:30 (bar)</p>
+                <p>17:30 - 21:30</p>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <p>Donderdag:</p>
+                <p>11:30 - 14:00</p>
+                <p>17:30 - 21:30</p>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <p>Vrijdag:</p>
+                <p>11:30 - 14:00</p>
+                <p>17:30 - 22:00</p>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <p>Zaterdag:</p>
+                <p>-</p>
+                <p>17:30 - 22:00</p>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <p>Zondag:</p>
+                <p>-</p>
+                <p>17:00 - 21:00</p>
+              </div>
             </div>
           </div>
         </div>
