@@ -9,8 +9,10 @@ export default function Home() {
     <>
       <div className={styles.heroContainer}>
         <Image src="/assets/hero.jpg" alt="Hero Image" fill priority />
-        <div className={styles.heroContent}>
-          <h1 className={` text-primary`}>“Daarmee pasta.”</h1>
+        <div
+          className={`${styles.heroContent} mt-32 sm:mt-24 sm:ml-20 lg:ml-28 2xl:ml-96`}
+        >
+          <h1 className={`text-primary`}>“Daarmee pasta.”</h1>
           <p className={`${styles.heroSubtitle} text-primary`}>
             Eenvoudig, vers en boordevol smaak.
           </p>
