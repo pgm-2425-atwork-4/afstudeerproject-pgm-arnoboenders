@@ -1,8 +1,8 @@
 import Image from "next/image";
 import styles from "./styles/hero.module.css";
-import Button from "@/components/Button";
+import Button from "@components/Button";
 import Link from "next/link";
-import { BookText } from "lucide-react";
+import { BookText, Utensils } from "lucide-react";
 
 export default function Home() {
   return (
@@ -10,15 +10,107 @@ export default function Home() {
       <div className={styles.heroContainer}>
         <Image src="/assets/hero.jpg" alt="Hero Image" fill priority />
         <div className={styles.heroContent}>
-          <h1 className={`${styles.heroTitle} text-primary`}>
-            “Daarmee pasta.”
-          </h1>
+          <h1 className={` text-primary`}>“Daarmee pasta.”</h1>
           <p className={`${styles.heroSubtitle} text-primary`}>
             Eenvoudig, vers en boordevol smaak.
           </p>
           <Link href={"/menu"}>
             <Button text="Bekijk het menu" icon={<BookText />} />
           </Link>
+        </div>
+      </div>
+      <div className="container mx-auto my-10 lg:mx-28">
+        <h2>Nieuw deze maand</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <h3>item 1</h3>
+            <p>ingredients</p>
+          </div>
+          <div>
+            <h3>item 2</h3>
+            <p>ingredients</p>
+          </div>
+          <div>
+            <h3>item 3</h3>
+            <p>ingredients</p>
+          </div>
+        </div>
+        <div className="flex justify-center my-10">
+          <Button text="Bestel nu" icon={<Utensils />} />
+        </div>
+        <div className="flex flex-col lg:flex-row items-center justify-between mb-8">
+          <Image
+            src="/assets/homeImg1.png"
+            alt="Foto interieur"
+            width={300}
+            height={300}
+          />
+          <p className="max-w-md">
+            🧑‍🍳 Eerlijke pasta, pure smaak Bij Loos draait alles om eenvoud en
+            kwaliteit. Heerlijke pasta, gemaakt met verse ingrediënten Ontdek
+            ons menu{" "}
+            <Link href="/menu" className="underline hover:text-primaryHover">
+              hier
+            </Link>
+          </p>
+        </div>
+        <div className="flex flex-col-reverse lg:flex-row items-center justify-between">
+          <p className="max-w-md">
+            📍 Geen reservatie nodig Loop gewoon binnen en geniet. Voor groepen
+            vanaf 6 personen kan je wel reserveren.
+          </p>
+          <Image
+            src="/assets/homeImg2.png"
+            alt="Foto interieur"
+            width={300}
+            height={300}
+          />
+        </div>
+        <div className="flex flex-col-reverse lg:flex-row items-center justify-between mt-8">
+          <Image
+            src="/assets/homeImg1.png"
+            alt="Foto interieur"
+            width={300}
+            height={300}
+          />
+          <div>
+            <h2>Openingsuren</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <p>Maandag:</p>
+              <p>Gesloten</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <p>Dinsdag:</p>
+              <p>11:30 - 14:00</p>
+              <p>17:30 - 21:30</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <p>Woensdag:</p>
+              <p>09:00 - 13:30 (bar)</p>
+              <p>17:30 - 21:30</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <p>Donderdag:</p>
+              <p>11:30 - 14:00</p>
+              <p>17:30 - 21:30</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <p>Vrijdag:</p>
+              <p>11:30 - 14:00</p>
+              <p>17:30 - 22:00</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <p>Zaterdag:</p>
+              <p>-</p>
+              <p>17:30 - 22:00</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <p>Zondag:</p>
+              <p>-</p>
+              <p>17:00 - 21:00</p>
+            </div>
+          </div>
         </div>
       </div>
     </>
