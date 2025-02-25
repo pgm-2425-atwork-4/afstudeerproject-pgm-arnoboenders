@@ -14,7 +14,7 @@ export default function Navigation() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 1024) {
         setIsOpen(false);
       }
     };
@@ -22,11 +22,13 @@ export default function Navigation() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   return (
     <>
-      <nav className={`${styles.nav} ${isOpen ? styles.open : ""} sm:px-20 my-8`}>
-        <div className="flex justify-between items-center gap-10 ">
-          <div className="flex items-center gap-10">
+      <nav className={`${styles.nav} ${isOpen ? styles.open : ""} w-full`}>
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 flex justify-between items-center w-full py-4 relative z-50">
+          {/* Left Section - Logo and Nav Links */}
+          <div className="flex items-center gap-4 sm:gap-8">
             {/* Logo */}
             <Link href="/">
               <Image
@@ -36,27 +38,28 @@ export default function Navigation() {
                     : "/Loos_logo_light.png"
                 }
                 alt="logo"
-                width={100}
-                height={100}
+                width={90}
+                height={90}
               />
             </Link>
 
             {/* Desktop Navigation */}
-            <div className={`${styles.navLinks} hidden lg:flex`}>
+            <div className={`${styles.navLinks} hidden md:flex`}>
               <NavLinks pathname={pathname} />
             </div>
           </div>
 
-          {/* Order Btn */}
-          <div className="flex items-center gap-10">
-            <Link href="/order">
+          {/* Right Section - Order Button & Mobile Menu */}
+          <div className="flex items-center gap-4 sm:gap-6 flex-shrink-0 px-4 relative">
+            <Link href="/order" className="min-w-[120px] md:min-w-[150px]">
               <Button text="Bestel nu" />
             </Link>
 
             {/* Mobile Menu Button */}
             <button
-              className={`${styles.menuButton} lg:hidden`}
+              className={`${styles.menuButton} md:hidden p-3 rounded-md`}
               onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle navigation menu"
             >
               {isOpen ? (
                 <X size={30} />
@@ -89,7 +92,7 @@ interface NavLinksProps {
 }
 
 const NavLinks = ({ pathname }: NavLinksProps) => (
-  <div className="flex gap-10">
+  <div className="flex gap-4 sm:gap-6">
     <Link className={getNavClass(pathname)} href="/about">
       Over ons
     </Link>
