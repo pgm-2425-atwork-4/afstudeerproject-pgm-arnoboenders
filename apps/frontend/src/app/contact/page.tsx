@@ -1,4 +1,4 @@
-import Button from "@/components/Button";
+import Button from "@/components/functional/button/Button";
 import Link from "next/link";
 
 export default function About() {

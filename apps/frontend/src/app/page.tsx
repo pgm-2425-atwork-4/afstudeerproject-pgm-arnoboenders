@@ -1,9 +1,9 @@
 import Image from "next/image";
 import styles from "./styles/hero.module.css";
-import Button from "@components/Button";
+import Button from "@/components/functional/button/Button";
 import Link from "next/link";
 import { BookText, Utensils } from "lucide-react";
-import ItemCard from "@/components/menu-items/ItemCard";
+import ItemCard from "@/components/design/menu-items/ItemCard";
 
 export default function Home() {
   return (
