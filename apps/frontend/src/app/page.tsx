@@ -1,16 +1,19 @@
 import Image from "next/image";
 import styles from "./styles/hero.module.css";
-import Button from "@components/Button";
+import Button from "@/components/functional/button/Button";
 import Link from "next/link";
 import { BookText, Utensils } from "lucide-react";
+import ItemCard from "@/components/design/menu-items/ItemCard";
+import { getMenuItems } from "@/modules/menu/api";
 
-export default function Home() {
+export default async function Home() {
+  const menuItems = await getMenuItems();
   return (
     <>
       <div className={styles.heroContainer}>
         <Image src="/assets/hero.jpg" alt="Hero Image" fill priority />
         <div
-          className={`${styles.heroContent} mt-32 sm:mt-24 sm:ml-20 lg:ml-28 2xl:ml-96`}
+          className={`${styles.heroContent} mt-32 sm:mt-24 sm:ml-20 lg:ml-28 2xl:ml-96 shadow-xl`}
         >
           <h1 className={`text-primary`}>“Daarmee pasta.”</h1>
           <p className={`${styles.heroSubtitle} text-primary`}>
@@ -24,19 +27,12 @@ export default function Home() {
       <div className="container mx-auto my-10">
         <h2>Nieuw deze maand</h2>
 
-        <div className="grid grid-cols-3 gap-4 overflow-scroll lg:overflow-hidden">
-          <div>
-            <h3>item 1</h3>
-            <p>ingredients</p>
-          </div>
-          <div>
-            <h3>item 2</h3>
-            <p>ingredients</p>
-          </div>
-          <div>
-            <h3>item 3</h3>
-            <p>ingredients</p>
-          </div>
+        <div className="grid grid-cols-3 gap-4">
+          {menuItems && menuItems
+            .filter((item) => item.is_new)
+            .map((item) => (
+              <ItemCard key={item.id} item={item} />
+            ))}
         </div>
         <div className="flex justify-center my-10">
           <Button text="Bestel nu" icon={<Utensils />} />
