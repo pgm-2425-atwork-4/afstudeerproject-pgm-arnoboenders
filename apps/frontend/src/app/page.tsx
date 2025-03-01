@@ -4,8 +4,10 @@ import Button from "@/components/functional/button/Button";
 import Link from "next/link";
 import { BookText, Utensils } from "lucide-react";
 import ItemCard from "@/components/design/menu-items/ItemCard";
+import { getMenuItems } from "@/modules/menu/api";
 
-export default function Home() {
+export default async function Home() {
+  const menuItems = await getMenuItems();
   return (
     <>
       <div className={styles.heroContainer}>
@@ -26,27 +28,11 @@ export default function Home() {
         <h2>Nieuw deze maand</h2>
 
         <div className="grid grid-cols-3 gap-4">
-          <ItemCard
-            item={{
-              name: "Pasta Carbonara",
-              image: "/Loos_logo_dark.png",
-              ingredients: "Pasta, eieren, spek, kaas",
-            }}
-          />
-          <ItemCard
-            item={{
-              name: "Pasta Bolognese",
-              image: "/Loos_logo_dark.png",
-              ingredients: "Pasta, gehakt, tomatensaus",
-            }}
-          />
-          <ItemCard
-            item={{
-              name: "Pasta Pesto",
-              image: "/Loos_logo_dark.png",
-              ingredients: "Pasta, basilicum, pijnboompitten",
-            }}
-          />
+          {menuItems && menuItems
+            .filter((item) => item.is_new)
+            .map((item) => (
+              <ItemCard key={item.id} item={item} />
+            ))}
         </div>
         <div className="flex justify-center my-10">
           <Button text="Bestel nu" icon={<Utensils />} />
