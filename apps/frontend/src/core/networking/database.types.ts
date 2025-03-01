@@ -61,25 +61,59 @@ export type Database = {
     Tables: {
       menu: {
         Row: {
+          category_id: number
           created_at: string
           id: number
-          ingredients: Json
+          ingredients: Json | null
+          is_new: boolean
           name: string
           price: number
+          veggie: boolean
+        }
+        Insert: {
+          category_id: number
+          created_at?: string
+          id?: number
+          ingredients?: Json | null
+          is_new?: boolean
+          name: string
+          price: number
+          veggie?: boolean
+        }
+        Update: {
+          category_id?: number
+          created_at?: string
+          id?: number
+          ingredients?: Json | null
+          is_new?: boolean
+          name?: string
+          price?: number
+          veggie?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "menu_category_id_fkey"
+            columns: ["category_id"]
+            referencedRelation: "menu_category"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      menu_category: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
         }
         Insert: {
           created_at?: string
           id?: number
-          ingredients: Json
           name: string
-          price: number
         }
         Update: {
           created_at?: string
           id?: number
-          ingredients?: Json
           name?: string
-          price?: number
         }
         Relationships: []
       }
