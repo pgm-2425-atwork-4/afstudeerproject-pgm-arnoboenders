@@ -1,5 +1,5 @@
 import Image from "next/image";
-import styles from "./styles/hero.module.css";
+import styles from "@/app/styles/hero.module.css";
 import Button from "@/components/functional/button/Button";
 import Link from "next/link";
 import { BookText, Utensils } from "lucide-react";
