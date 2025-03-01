@@ -12,7 +12,7 @@ export default function MenuItemCard({ item }: { item: MenuItem }) {
         <p className="min-w-10 text-right">€ {item.price}</p>
       </div>
       <p className="italic text-sm">
-        {item.ingredients && item.ingredients.ingredients.join(" - ")}
+        {Array.isArray(item.ingredients) && item.ingredients.join(" - ")}
       </p>
     </div>
   );
