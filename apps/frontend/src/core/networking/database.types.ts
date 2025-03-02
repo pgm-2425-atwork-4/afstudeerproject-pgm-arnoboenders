@@ -67,6 +67,7 @@ export type Database = {
           ingredients: Json | null
           is_new: boolean
           name: string
+          owner_id: string | null
           price: number
           veggie: boolean
         }
@@ -77,6 +78,7 @@ export type Database = {
           ingredients?: Json | null
           is_new?: boolean
           name: string
+          owner_id?: string | null
           price: number
           veggie?: boolean
         }
@@ -87,6 +89,7 @@ export type Database = {
           ingredients?: Json | null
           is_new?: boolean
           name?: string
+          owner_id?: string | null
           price?: number
           veggie?: boolean
         }
