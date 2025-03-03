@@ -44,7 +44,7 @@ export default function Navigation() {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className={`${styles.navLinks} hidden md:flex`}>
+            <div className={`${styles.navLinks} hidden md:flex gap-4`}>
               <NavLinks pathname={pathname} />
             </div>
           </div>
