@@ -1,3 +1,5 @@
+"use client";
+
 interface ButtonProps {
   text: string;
   icon?: React.ReactNode;
@@ -15,7 +17,7 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button
-      className="bg-primary hover:bg-primaryHover text-white px-6 py-3 rounded-lg flex items-center gap-2"
+      className="bg-primary hover:bg-primaryHover text-white px-6 py-3 rounded-lg flex justify-center items-center gap-2"
       type={type}
       formAction={formAction}
       onClick={onClick}
