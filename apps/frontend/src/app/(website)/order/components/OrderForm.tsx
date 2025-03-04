@@ -2,7 +2,7 @@ import Button from "@/components/functional/button/Button";
 
 export default function OrderForm() {
   return (
-    <form className="sticky top-8 flex flex-col justify-center gap-4 w-full">
+    <form className="sticky top-8 flex flex-col justify-center gap-4 w-3/4">
       <h2>Bestelling</h2>
       <div className="flex justify-between gap-4">
         <div className="flex gap-4">
