@@ -5,7 +5,7 @@ export default function OrderPage() {
   return (
     <div className="container my-32">
       <h1>Bestel</h1>
-      <div className="flex justify-between items-start gap-8">
+      <div className="flex justify-between gap-8">
         <div className="w-2/3">
           <OrderMenu />
         </div>

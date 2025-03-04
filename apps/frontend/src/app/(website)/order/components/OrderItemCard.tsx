@@ -1,4 +1,4 @@
-import AddButton from "@/components/functional/button/AddButton";
+import AddButton from "@/app/(website)/order/components/AddButton";
 import { MenuItem } from "@/modules/menu/types";
 
 export default function OrderItemCard({ menuItem }: { menuItem: MenuItem }) {
@@ -14,7 +14,7 @@ export default function OrderItemCard({ menuItem }: { menuItem: MenuItem }) {
             menuItem.ingredients.join(" - ")}
         </p>
         <div>
-          <AddButton />
+          <AddButton menuItem={menuItem} />
         </div>
       </div>
     </div>
