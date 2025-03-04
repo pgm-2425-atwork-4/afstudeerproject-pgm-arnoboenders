@@ -14,7 +14,7 @@ export default function OrderNav({
           </li>
         ))}
           </ul>
-          <hr className="border-black w-3/4"/>
+          <hr className="border-black w-full"/>
     </nav>
   );
 }

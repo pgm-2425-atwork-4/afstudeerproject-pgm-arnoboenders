@@ -30,7 +30,7 @@ export default function OrderMenu() {
           categories.map((category) => (
             <div key={category.id}>
               <h2 id={category.name}>{category.name}</h2>
-              <div className="flex flex-wrap gap-8">
+              <div className="grid md:grid-cols-2 gap-8">
                 {menu
                   .filter((item) => item.category_id === category?.id)
                   .map((filteredItem) => (
