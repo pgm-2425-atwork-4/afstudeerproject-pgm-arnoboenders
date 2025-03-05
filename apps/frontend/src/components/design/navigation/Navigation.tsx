@@ -27,9 +27,7 @@ export default function Navigation() {
     <>
       <nav className={`${styles.nav} ${isOpen ? styles.open : ""} w-full`}>
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 flex justify-between items-center w-full py-4 relative z-50">
-          {/* Left Section - Logo and Nav Links */}
           <div className="flex items-center gap-4 sm:gap-8">
-            {/* Logo */}
             <Link href="/">
               <Image
                 src={
@@ -42,8 +40,6 @@ export default function Navigation() {
                 height={90}
               />
             </Link>
-
-            {/* Desktop Navigation */}
             <div className={`${styles.navLinks} hidden md:flex gap-4`}>
               <NavLinks pathname={pathname} />
             </div>
