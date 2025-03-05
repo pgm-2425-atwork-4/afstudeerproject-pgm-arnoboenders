@@ -11,7 +11,7 @@ export default function OrderOverview() {
           <OrderBox
             layout="fullwidth"
             showForm={true}
-            buttonText="Plaats bestelling"
+            buttonText="Ga door naar betaling"
           />
         </div>
       </div>
