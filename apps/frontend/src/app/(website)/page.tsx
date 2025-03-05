@@ -1,5 +1,5 @@
 import Image from "next/image";
-import styles from "./styles/hero.module.css";
+import styles from "@/app/styles/hero.module.css";
 import Button from "@/components/functional/button/Button";
 import Link from "next/link";
 import { BookText, Utensils } from "lucide-react";
@@ -15,7 +15,7 @@ export default async function Home() {
         <div
           className={`${styles.heroContent} mt-32 sm:mt-24 sm:ml-20 lg:ml-28 2xl:ml-96 shadow-xl`}
         >
-          <h1 className={`text-primary`}>“Daarmee pasta.”</h1>
+          <h1 className={`text-primary`}>“Daarmee pasta...”</h1>
           <p className={`${styles.heroSubtitle} text-primary`}>
             Eenvoudig, vers en boordevol smaak.
           </p>
