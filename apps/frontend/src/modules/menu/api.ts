@@ -1,5 +1,7 @@
 import { supabase } from "@/core/networking/api";
 import { CreateMenuItem, MenuCategory, MenuItem } from "./types";
+import { uploadImage } from "../storage/api";
+import { Bucket } from "../storage/types";
 
 export const getMenuItems = async (): Promise<MenuItem[] | null> => {
   const { data, error } = await supabase.from("menu").select("*");
@@ -96,4 +98,26 @@ export const deleteMenuItem = async (item_id: number) => {
   if (error) {
     throw new Error(error.message);
   }
+};
+
+export const updateMenuImage = async (image: string) => {
+  const fileName = `${Date.now()}-menu-image.jpg`;
+  await uploadImage(Bucket.MENU, image, fileName);
+
+  // delete all the images in the table menu_image
+  const { error: deleteError } = await supabase.from("menu_image").delete();
+  if (deleteError) {
+    console.error("Error deleting existing menu image:", deleteError);
+    throw new Error(deleteError.message);
+  }
+
+  // Update the menu image URL in the database
+  const { data, error } = await supabase
+    .from("menu_image")
+    .insert({ image: fileName })
+    .select();
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data[0];
 };
