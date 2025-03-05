@@ -1,4 +1,4 @@
-import OrderForm from "./components/OrderForm";
+import OrderBox from "./components/OrderBox";
 import OrderMenu from "./components/OrderMenu";
 
 export default function OrderPage() {
@@ -10,7 +10,7 @@ export default function OrderPage() {
           <OrderMenu />
         </div>
         <div className="w-1/3">
-          <OrderForm />
+          <OrderBox layout="sticky"/>
         </div>
       </div>
     </div>
