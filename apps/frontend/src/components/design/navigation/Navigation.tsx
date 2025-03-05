@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import Button from "@/components/functional/button/Button";
 import MobileNav from "./MobileNav";
-import styles from "./navigation.module.css"; // Import CSS
+import styles from "./navigation.module.css";
 
 export default function Navigation() {
   const pathname = usePathname();
