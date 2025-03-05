@@ -99,7 +99,7 @@ export default function EditMenu({
   };
 
   return (
-    <>
+    <div className="flex flex-col  justify-center items-center gap-8">
       <Button
         onClick={() =>
           handleCreateClick({
@@ -163,6 +163,6 @@ export default function EditMenu({
         categories={categories}
         setSelectedItem={setSelectedItem}
       />
-    </>
+    </div>
   );
 }
