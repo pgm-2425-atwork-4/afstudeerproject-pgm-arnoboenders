@@ -19,7 +19,6 @@ export async function login(formData: FormData) {
     redirect("/error");
   }
 
-  // **Ensure session is retrieved after login**
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -37,12 +36,29 @@ export async function login(formData: FormData) {
     path: "/",
   });
 
-  cookieStore.set("sb-refresh-token", session.refresh_token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-  });
+  // cookieStore.set("sb-refresh-token", session.refresh_token, {
+  //   httpOnly: true,
+  //   secure: process.env.NODE_ENV === "production",
+  //   path: "/",
+  // });
 
   revalidatePath("/private", "layout");
   redirect("/private");
+}
+
+export async function logout() {
+  // Step 1: Sign out user from Supabase
+  await supabase.auth.signOut();
+
+  // Step 2: Manually delete authentication cookies
+  const cookieStore = await cookies();
+  cookieStore.delete("sb-access-token");
+  cookieStore.delete("sb-refresh-token");
+
+  // Step 3: Revalidate session data to remove cached state
+  revalidatePath("/", "layout");
+  revalidatePath("/private", "layout");
+
+  // Step 4: Redirect the user AFTER session is cleared
+  return redirect("/login"); // Use return to ensure the redirect executes
 }
