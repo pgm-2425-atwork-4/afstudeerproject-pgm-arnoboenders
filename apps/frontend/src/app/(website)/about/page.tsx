@@ -13,7 +13,7 @@ export default function About() {
             height={500}
           />
         </div>
-        <p className="max-w-lg">
+        <p className="max-w-xl text-lg">
           LOOS, dat is een pastarestaurant met een snuifje rock ’n roll in
           hartje Merchtem. Verrassend en hip maar in de eerste plaats gewoon
           top. En dan hebben we het over de pasta natuurlijk! Met op het menu
