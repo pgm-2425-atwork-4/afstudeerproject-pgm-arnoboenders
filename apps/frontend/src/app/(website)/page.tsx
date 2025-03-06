@@ -50,7 +50,7 @@ export default async function Home() {
             🧑‍🍳 Eerlijke pasta, pure smaak Bij Loos draait alles om eenvoud en
             kwaliteit. Heerlijke pasta, gemaakt met verse ingrediënten Ontdek
             ons menu{" "}
-            <Link href="/menu" className="underline hover:text-primaryHover">
+            <Link href="/menu" className="underline hover:text-primary500">
               hier
             </Link>
           </p>

@@ -6,13 +6,13 @@ export default function About() {
     <div className=" container  mt-32 mb-20">
       <h1>Contact</h1>
       <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2513.1110547807775!2d4.229522177214712!3d50.95865095064188!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c3ebc248d0ae95%3A0x262db1569fa0083!2sLoos!5e0!3m2!1sen!2sbe!4v1740495788685!5m2!1sen!2sbe"
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2513.1110547807775!2d4.229522177214712!3d50.95865095064188!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c3ebc248d0ae95%3A0x262db1569fa0083!2sLoos!5e0!3m2!1sen!2sbe!4v1740495788685!5m2!1sen!2sbe"
           loading="lazy"
           height={800}
-            referrerPolicy="no-referrer-when-downgrade"
-            className="shadow-xl rounded-xl w-full lg:w-2/3"
-          ></iframe>
+          referrerPolicy="no-referrer-when-downgrade"
+          className="shadow-xl rounded-xl w-full lg:w-2/3"
+        ></iframe>
         <div className="flex flex-col gap-4">
           <div>
             <h2>Openingsuren</h2>
@@ -94,11 +94,11 @@ export default function About() {
           </div>
           <div className="flex flex-col">
             <p className="max-w-lg">Nieuwstraat 4 - 1785 Merchtem</p>
-            <Link className="hover:text-primaryHover" href="tel:052577877">
+            <Link className="hover:text-primary300" href="tel:052577877">
               Tel 052 57 78 77
             </Link>
             <Link
-              className="hover:text-primaryHover"
+              className="hover:text-primary300"
               href="mailto:info@loos-merchtem.be"
             >
               info@loos-merchtem.be
