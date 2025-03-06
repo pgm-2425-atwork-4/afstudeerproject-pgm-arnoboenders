@@ -28,24 +28,25 @@ export default async function Home() {
         <h2>Nieuw deze maand</h2>
 
         <div className="grid grid-cols-3 gap-4">
-          {menuItems && menuItems
-            .filter((item) => item.is_new)
-            .map((item) => (
-              <ItemCard key={item.id} item={item} />
-            ))}
+          {menuItems &&
+            menuItems
+              .filter((item) => item.is_new)
+              .map((item) => <ItemCard key={item.id} item={item} />)}
         </div>
         <div className="flex justify-center my-10">
-          <Button text="Bestel nu" icon={<Utensils />} />
+          <Link href="/order">
+            <Button text="Bestel nu" icon={<Utensils />} />
+          </Link>
         </div>
-        <div className="flex flex-col lg:flex-row items-center justify-between mb-8 gap-8 lg:gap-0">
+        <div className="grid lg:grid-cols-2 items-center justify-center justify-items-center my-20 gap-8">
           <Image
             src="/assets/homeImg1.png"
             alt="Foto interieur"
-            width={300}
+            width={500}
             height={300}
             className="shadow-xl"
           />
-          <p className="max-w-md">
+          <p className="max-w-md text-lg">
             🧑‍🍳 Eerlijke pasta, pure smaak Bij Loos draait alles om eenvoud en
             kwaliteit. Heerlijke pasta, gemaakt met verse ingrediënten Ontdek
             ons menu{" "}
@@ -53,31 +54,29 @@ export default async function Home() {
               hier
             </Link>
           </p>
-        </div>
-        <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-8 lg:gap-0">
-          <p className="max-w-md">
+
+          <p className="max-w-md text-lg">
             📍 Geen reservatie nodig Loop gewoon binnen en geniet. Voor groepen
             vanaf 6 personen kan je wel reserveren.
           </p>
           <Image
             src="/assets/homeImg2.png"
             alt="Foto interieur"
-            width={300}
+            width={500}
             height={300}
             className="shadow-xl"
           />
-        </div>
-        <div className="flex flex-col-reverse lg:flex-row items-center justify-between mt-8 gap-8 lg:gap-0">
+
           <Image
             src="/assets/homeImg1.png"
             alt="Foto interieur"
-            width={300}
+            width={500}
             height={300}
             className="shadow-xl"
           />
           <div>
             <h2>Openingsuren</h2>
-            <div className="text-sm">
+            <div className="text-lg">
               <div className="grid grid-cols-3 gap-4">
                 <p>Maandag:</p>
                 <p>Gesloten</p>
