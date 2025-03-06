@@ -119,7 +119,7 @@ export default function OrderBox({
                 className={`p-2 border rounded ${
                   selectedTime === time
                     ? "bg-primary text-white"
-                    : "bg-primaryHover hover:bg-primary"
+                    : "bg-primary200 hover:bg-primary"
                 }`}
               >
                 {time}
