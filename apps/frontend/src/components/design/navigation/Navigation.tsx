@@ -25,23 +25,21 @@ export default function Navigation() {
 
   return (
     <>
-      <nav className={`${styles.nav} ${isOpen ? styles.open : ""} w-full`}>
+      <nav
+        className={`${styles.nav} ${isOpen ? styles.open : ""} w-full ${pathname === "/" && "bg-whiteTransparent"}`}
+      >
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 flex justify-between items-center w-full py-4 relative z-50">
-          <div className="flex items-center gap-4 sm:gap-8">
+          <div className={`flex items-center gap-4 sm:gap-8 `}>
             <Link href="/">
               <Image
-                src={
-                  isOpen || pathname !== "/"
-                    ? "/Loos_logo_dark.png"
-                    : "/Loos_logo_light.png"
-                }
+                src="/Loos_logo_dark.png"
                 alt="logo"
                 width={90}
                 height={90}
               />
             </Link>
             <div className={`${styles.navLinks} hidden md:flex gap-4`}>
-              <NavLinks pathname={pathname} />
+              <NavLinks />
             </div>
           </div>
 
@@ -82,32 +80,22 @@ export default function Navigation() {
   );
 }
 
-// Reusable NavLinks Component
-interface NavLinksProps {
-  pathname: string;
-}
-
-const NavLinks = ({ pathname }: NavLinksProps) => (
+const NavLinks = () => (
   <div className="flex gap-4 sm:gap-6">
-    <Link className={getNavClass(pathname)} href="/menu">
+    <Link className="hover:text-primary500" href="/menu">
       Menu
     </Link>
-    <Link className={getNavClass(pathname)} href="/about">
+    <Link className="hover:text-primary500" href="/about">
       Over ons
     </Link>
-    <Link className={getNavClass(pathname)} href="/eat-wise">
+    <Link className="hover:text-primary500" href="/eat-wise">
       Eat Wise
     </Link>
-    <Link className={getNavClass(pathname)} href="/vacancy">
+    <Link className="hover:text-primary500" href="/vacancy">
       Vacature
     </Link>
-    <Link className={getNavClass(pathname)} href="/contact">
+    <Link className="hover:text-primary500" href="/contact">
       Contact
     </Link>
   </div>
 );
-
-const getNavClass = (pathname: string) =>
-  pathname === "/"
-    ? "text-white hover:text-primaryHover"
-    : "text-black hover:text-primaryHover";
