@@ -2,6 +2,7 @@
 
 import { useOrders } from "@/components/context/OrderProvider";
 import Button from "@/components/functional/button/Button";
+import { createOrder } from "@/modules/order/api";
 import { redirect } from "next/navigation";
 import { useState } from "react";
 
@@ -13,11 +14,10 @@ interface Order {
 }
 
 interface OrderBoxProps {
-  layout?: "sticky" | "fullwidth"; // Determines layout style
-  showForm?: boolean; // Show form elements
-  onSubmit?: (event: React.FormEvent) => void; // Handle form submission
-  buttonText?: string; // Customize button text
-  buttonAction?: () => void; // Function to execute on button click
+  layout?: "sticky" | "fullwidth";
+  showForm?: boolean;
+  buttonText?: string;
+  buttonAction?: () => void;
 }
 
 const aggregateOrders = (orders: Order[]): Order[] => {
@@ -36,25 +36,55 @@ const aggregateOrders = (orders: Order[]): Order[] => {
 export default function OrderBox({
   layout = "sticky",
   showForm = false,
-  onSubmit,
   buttonText = "Bestel",
-  buttonAction = () => redirect("/order/overview"),
 }: OrderBoxProps) {
   const { orders } = useOrders();
   const aggregatedOrders = aggregateOrders(orders);
 
-  // State for selected time slot
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [customerName, setCustomerName] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
 
-  // Time slot options (example times)
+  // Example Time Slots
   const timeSlots = ["12:00", "12:30", "13:00", "13:30", "14:00"];
+
+  // Submit Order
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!customerName || !phoneNumber || !selectedTime) {
+      alert("Vul alle velden in voordat je bestelt!");
+      return;
+    }
+
+    const orderData = {
+      price: aggregatedOrders.reduce((acc, order) => acc + order.price, 0), // Total price
+      order: aggregatedOrders.map(({ id, amount, name }) => ({
+        id,
+        amount,
+        name,
+      })), // Order details
+      name: customerName,
+      phone_number: phoneNumber,
+      take_away_time: selectedTime,
+    };
+
+    try {
+      console.log("orderData", orderData);
+      const response = await createOrder(orderData);
+      console.log("response", response);
+
+      console.log("Bestelling geplaatst:", response);
+      // redirect(paymentUrl);
+    } catch (error) {
+      console.error("Fout bij het plaatsen van de bestelling:", error);
+    }
+  };
 
   return (
     <div
       className={`${
-        layout === "sticky"
-          ? "sticky top-8 gap-4" // Sticky sidebar layout
-          : "w-full p-8 gap-8" // Full-width layout
+        layout === "sticky" ? "sticky top-8 gap-4" : "w-full p-8 gap-8"
       } flex flex-col justify-center`}
     >
       <h2>Bestelling</h2>
@@ -78,7 +108,6 @@ export default function OrderBox({
         </p>
       </div>
 
-      {/* Show time slots if fullwidth layout */}
       {layout === "fullwidth" && (
         <div className="mt-4">
           <h3 className="mb-2">Kies een afhaaltijd:</h3>
@@ -101,23 +130,39 @@ export default function OrderBox({
       )}
 
       {showForm ? (
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <h3>Vul jouw gegevens in</h3>
           <label>
             Naam:
-            <input type="text" className="border p-2 rounded w-full" required />
+            <input
+              type="text"
+              className="border p-2 rounded w-full"
+              required
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+            />
           </label>
           <label>
-            Adres:
-            <input type="text" className="border p-2 rounded w-full" required />
+            Telefoonnummer:
+            <input
+              type="text"
+              className="border p-2 rounded w-full"
+              required
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+            />
           </label>
           {selectedTime && (
             <p className="text-green-600">Afhaal tijd: {selectedTime}</p>
           )}
-          <Button text={buttonText} type="submit" />
+          <Button
+            text={buttonText}
+            type="submit"
+            onClick={() => handleSubmit}
+          />
         </form>
       ) : (
-        <Button text={buttonText} onClick={buttonAction} />
+        <Button text={buttonText} onClick={() => redirect("order/overview")} />
       )}
     </div>
   );
