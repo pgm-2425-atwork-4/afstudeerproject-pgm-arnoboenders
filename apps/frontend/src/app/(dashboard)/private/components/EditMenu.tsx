@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Pencil, Trash } from "lucide-react";
 import {
   createMenuItem,
   deleteMenuItem,
@@ -13,12 +12,10 @@ import { CreateMenuItem, MenuCategory, MenuItem } from "@/modules/menu/types";
 import EditModal from "./EditModal";
 import Button from "@/components/functional/button/Button";
 import CreateModal from "./CreateModal";
+import UploadImage from "./UploadImage";
+import MenuItemBackOffice from "@/components/design/menu-items/MenuItemBackOffice";
 
-export default function EditMenu({
-  owner_id,
-}: {
-  owner_id: string;
-  }) {
+export default function EditMenu({ owner_id }: { owner_id: string }) {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -100,51 +97,45 @@ export default function EditMenu({
 
   return (
     <div className="flex flex-col  justify-center items-center gap-8">
-      <Button
-        onClick={() =>
-          handleCreateClick({
-            owner_id: owner_id,
-            name: "",
-            ingredients: [],
-            price: 0,
-            is_new: false,
-            veggie: false,
-            category_id: 0,
-          })
-        }
-        text="Create New Item"
-      />
+      <div className="w-full flex flex-col items-center gap-8">
+        <div className="w-full p-4">
+          <h2>Menu-afbeelding uploaden</h2>
+          <UploadImage />
+        </div>
+        <div className="w-full flex justify-between items-center p-4">
+          <h2>
+            Gerechten{" "}
+            <span className="text-sm text-gray-600">
+              ({menuItems.length} gerechten)
+            </span>
+          </h2>
+          <Button
+            onClick={() =>
+              handleCreateClick({
+                owner_id: owner_id,
+                name: "",
+                ingredients: [],
+                price: 0,
+                is_new: false,
+                veggie: false,
+                category_id: 0,
+              })
+            }
+            text="Voeg nieuw gerecht toe"
+          />
+        </div>
+      </div>
+
       <div className="space-y-4">
         {menuItems
           .sort((a, b) => a.id - b.id)
           .map((item) => (
-            <div
+            <MenuItemBackOffice
               key={item.id}
-              className="flex justify-between items-center p-4 gap-4 border rounded-lg shadow-md"
-            >
-              <div className="w-full">
-                <div className="flex items-center justify-between gap-4">
-                  <h2 className="text-lg font-semibold">{item.name}</h2>
-                  <p className="text-sm font-bold min-w-10">€ {item.price}</p>
-                </div>
-                <p className="text-gray-600 text-sm italic">
-                  {Array.isArray(item.ingredients) &&
-                    item.ingredients.join(" - ")}
-                </p>
-              </div>
-              <button
-                onClick={() => handleDelete(item.id)}
-                className="p-2 rounded-lg hover:bg-gray-100"
-              >
-                <Trash className="w-5 h-5 text-blue-500" />
-              </button>
-              <button
-                onClick={() => handleEditClick(item)}
-                className="p-2 rounded-lg hover:bg-gray-100"
-              >
-                <Pencil className="w-5 h-5 text-blue-500" />
-              </button>
-            </div>
+              item={item}
+              onEdit={handleEditClick}
+              onDelete={handleDelete}
+            />
           ))}
       </div>
       <CreateModal

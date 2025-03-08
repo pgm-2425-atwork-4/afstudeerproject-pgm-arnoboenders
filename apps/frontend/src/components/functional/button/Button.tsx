@@ -6,6 +6,7 @@ interface ButtonProps {
   type?: "button" | "submit" | "reset";
   formAction?: string | ((formData: FormData) => Promise<void>);
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 export default function Button({
@@ -14,6 +15,7 @@ export default function Button({
   type,
   formAction,
   onClick,
+  disabled,
 }: ButtonProps) {
   return (
     <button
@@ -21,6 +23,7 @@ export default function Button({
       type={type}
       formAction={formAction}
       onClick={onClick}
+      disabled={disabled}
     >
       {icon}
       {text}
