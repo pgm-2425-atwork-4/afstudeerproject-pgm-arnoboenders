@@ -12,6 +12,7 @@ interface OrderContextProps {
   orders: Order[];
   addOrder: (menuItems: Order[]) => void;
   removeOrder: (id: number) => void;
+  emptyOrders: () => void;
 }
 
 const OrderContext = createContext<OrderContextProps | undefined>(undefined);
@@ -52,8 +53,12 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     setOrders((prevOrders) => prevOrders.filter((order) => order.id !== id));
   };
 
+  const emptyOrders = () => {
+    setOrders([]);
+  };
+
   return (
-    <OrderContext.Provider value={{ orders, addOrder, removeOrder }}>
+    <OrderContext.Provider value={{ orders, addOrder, removeOrder, emptyOrders }}>
       {children}
     </OrderContext.Provider>
   );

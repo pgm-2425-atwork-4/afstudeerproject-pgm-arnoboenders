@@ -47,7 +47,7 @@ export default function OrderBox({
   showForm = false,
   buttonText = "Bestel",
 }: OrderBoxProps) {
-  const { orders } = useOrders();
+  const { orders, emptyOrders } = useOrders();
   const aggregatedOrders = aggregateOrders(orders);
 
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -85,6 +85,7 @@ export default function OrderBox({
 
       console.log("Bestelling geplaatst:", response);
       // redirect(paymentUrl);
+      emptyOrders();
     } catch (error) {
       console.error("Fout bij het plaatsen van de bestelling:", error);
     }
