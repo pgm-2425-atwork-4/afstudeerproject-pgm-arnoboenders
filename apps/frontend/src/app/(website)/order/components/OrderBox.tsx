@@ -11,6 +11,8 @@ interface Order {
   amount: number;
   price: number;
   name: string;
+  size?: string;
+  pastaType?: string;
 }
 
 interface OrderBoxProps {
@@ -22,10 +24,17 @@ interface OrderBoxProps {
 
 const aggregateOrders = (orders: Order[]): Order[] => {
   return orders.reduce<Order[]>((acc, order) => {
-    const existingOrder = acc.find((o) => o.id === order.id);
+    // Find an exact match with id, size, and pastaType
+    const existingOrder = acc.find(
+      (o) =>
+        o.id === order.id &&
+        o.size === order.size &&
+        o.pastaType === order.pastaType
+    );
+
     if (existingOrder) {
-      existingOrder.amount += 1;
-      existingOrder.price += order.price;
+      existingOrder.amount += order.amount; // Increase amount if same variant exists
+      existingOrder.price += order.price * order.amount; // Update price accordingly
     } else {
       acc.push({ ...order, amount: Number(order.amount) || 1 });
     }
@@ -38,7 +47,7 @@ export default function OrderBox({
   showForm = false,
   buttonText = "Bestel",
 }: OrderBoxProps) {
-  const { orders } = useOrders();
+  const { orders, emptyOrders } = useOrders();
   const aggregatedOrders = aggregateOrders(orders);
 
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -76,6 +85,7 @@ export default function OrderBox({
 
       console.log("Bestelling geplaatst:", response);
       // redirect(paymentUrl);
+      emptyOrders();
     } catch (error) {
       console.error("Fout bij het plaatsen van de bestelling:", error);
     }
@@ -89,7 +99,7 @@ export default function OrderBox({
     >
       <h2>Bestelling</h2>
       {aggregatedOrders.map(({ id, amount, price, name }) => (
-        <div key={id} className="flex justify-between gap-4">
+        <div key={`${id}-${name}`} className="flex justify-between gap-4">
           <div className="flex gap-4">
             <p>{amount}x</p>
             <p>{name}</p>
