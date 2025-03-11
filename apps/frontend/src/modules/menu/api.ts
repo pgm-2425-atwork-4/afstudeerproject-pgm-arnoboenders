@@ -83,7 +83,6 @@ export const createMenuItem = async (item: CreateMenuItem) => {
         is_new: item.is_new,
         veggie: item.veggie,
         category_id: item.category_id,
-        owner_id: item.owner_id,
       },
     ])
     .select();
@@ -102,22 +101,46 @@ export const deleteMenuItem = async (item_id: number) => {
 
 export const updateMenuImage = async (image: string) => {
   const fileName = `${Date.now()}-menu-image.jpg`;
+
+  // Upload new image
   await uploadImage(Bucket.MENU, image, fileName);
 
-  // delete all the images in the table menu_image
-  const { error: deleteError } = await supabase.from("menu_image").delete();
-  if (deleteError) {
-    console.error("Error deleting existing menu image:", deleteError);
-    throw new Error(deleteError.message);
+  // Fetch the existing image record
+  const { data: existingImage, error: fetchError } = await supabase
+    .from("menu_image")
+    .select("id")
+    .order("id", { ascending: true })
+    .limit(1)
+    .single();
+
+  if (fetchError) {
+    console.error("Error fetching existing menu image:", fetchError);
   }
 
-  // Update the menu image URL in the database
-  const { data, error } = await supabase
-    .from("menu_image")
-    .insert({ image: fileName })
-    .select();
-  if (error) {
-    throw new Error(error.message);
+  if (existingImage) {
+    // Update the existing row
+    const { data, error } = await supabase
+      .from("menu_image")
+      .update({ name: fileName })
+      .eq("id", existingImage.id)
+      .select();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data[0];
+  } else {
+    // If no existing image, insert a new one
+    const { data, error } = await supabase
+      .from("menu_image")
+      .insert({ name: fileName })
+      .select();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data[0];
   }
-  return data[0];
 };

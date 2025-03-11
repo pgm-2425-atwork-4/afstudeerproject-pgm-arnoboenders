@@ -9,9 +9,7 @@ export default async function Menu() {
       <h1>Menu</h1>
       <div className="flex items-center lg:items-start justify-center flex-col gap-8 lg:flex-row">
         <Image src="/assets/menuImg.jpg" alt="Menu" width={800} height={1080} />
-        <div>
-          {menuItems && <MenuList items={menuItems} />}
-        </div>
+        <div>{menuItems && <MenuList items={menuItems} />}</div>
       </div>
     </div>
   );

@@ -1,3 +1,3 @@
 export enum Bucket {
-  MENU = "menu",
+  MENU = "menu_image",
 }
