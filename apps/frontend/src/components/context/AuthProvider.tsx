@@ -31,6 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check for user session on mount
     const fetchUser = async () => {
       const { data, error } = await supabase.auth.getUser();
+      console.log("user", data?.user);
       if (data?.user) setUser(data.user);
       if (error) console.error("Error fetching user:", error.message);
     };

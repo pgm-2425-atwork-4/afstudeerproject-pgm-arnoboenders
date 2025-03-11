@@ -10,11 +10,13 @@ export default function OrderNav({
       <ul className="flex justify-start gap-8 py-4">
         {categories.map((category) => (
           <li key={category.id}>
-            <a href={`#${category.name}`} className="hover:underline">{category.name}</a>
+            <a href={`#${category.name}`} className="hover:underline">
+              {category.name}
+            </a>
           </li>
         ))}
-          </ul>
-          <hr className="border-black w-full"/>
+      </ul>
+      <hr className="border-black w-full" />
     </nav>
   );
 }

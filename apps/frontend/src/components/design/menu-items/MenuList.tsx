@@ -16,7 +16,7 @@ export default async function MenuList({ items }: { items: MenuItem[] }) {
               .map((filteredItem) => (
                 <MenuItemCard key={filteredItem.id} item={filteredItem} />
               ))}
-            <hr className="border-black pb-6"/>
+            <hr className="border-black pb-6" />
           </div>
         ))}
     </div>

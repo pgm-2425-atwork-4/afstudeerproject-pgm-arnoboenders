@@ -58,7 +58,9 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <OrderContext.Provider value={{ orders, addOrder, removeOrder, emptyOrders }}>
+    <OrderContext.Provider
+      value={{ orders, addOrder, removeOrder, emptyOrders }}
+    >
       {children}
     </OrderContext.Provider>
   );
