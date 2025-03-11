@@ -4,11 +4,11 @@ import { useState } from "react";
 import Button from "@/components/functional/button/Button";
 import InputField from "@/components/functional/input/InputField";
 import { loginSchema } from "@/app/schemas/login";
-import { useAuth } from "@/components/context/AuthProvider";
 import { redirect } from "next/navigation";
+import { useAuthContext } from "@/components/context/AuthProvider";
 
 export default function LoginForm() {
-  const { login } = useAuth();
+  const { login } = useAuthContext();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<{
     email?: string;
@@ -21,8 +21,8 @@ export default function LoginForm() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      
+    e.preventDefault();
+
     const result = loginSchema.safeParse(formData);
     if (!result.success) {
       const formattedErrors = result.error.format();
@@ -36,9 +36,9 @@ export default function LoginForm() {
     setErrors({});
 
     const response = await login(formData.email, formData.password);
-
-    if (!response.success) {
-      setErrors((prev) => ({ ...prev, general: response.message }));
+    console.log(response);
+    if (response?.user === null) {
+      setErrors({ general: "Login failed" });
       return;
     }
     redirect("/private");

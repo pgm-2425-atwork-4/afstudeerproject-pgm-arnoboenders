@@ -3,11 +3,10 @@
 import { redirect } from "next/navigation";
 import EditMenu from "@/app/(dashboard)/private/components/EditMenu";
 import LogoutButton from "@/components/functional/button/LogoutButton";
-import { useAuth } from "@/components/context/AuthProvider";
+import { useAuthContext } from "@/components/context/AuthProvider";
 
 export default function PrivatePage() {
-  const { user } = useAuth();
-  console.log(user);
+  const { user } = useAuthContext();
   if (!user) {
     redirect("/login");
   }

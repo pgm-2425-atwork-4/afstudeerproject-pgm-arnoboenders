@@ -4,7 +4,7 @@ import { MenuItem } from "@/modules/menu/types";
 interface MenuItemBackOfficeProps {
   item: MenuItem;
   onEdit: (item: MenuItem) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 export default function MenuItemBackOffice({

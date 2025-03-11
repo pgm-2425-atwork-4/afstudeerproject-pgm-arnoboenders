@@ -1,76 +1,52 @@
-"use client";
+'use client'
+import { createContext, useContext } from "react";
+import useSupabaseAuth from "./useSupabaseAuth";
+import { Auth, User } from "@/modules/auth/types";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
-import { supabase } from "@/core/networking/api";
-import { User } from "@supabase/supabase-js";
-
-// Define AuthContext type
-interface AuthContextType {
-  user: User | null;
-  login: (
-    email: string,
-    password: string
-  ) => Promise<{ success: boolean; message?: string }>;
+type AuthContextType = {
+  isLoggedIn: boolean;
+  user?: User | null;
+  auth: Auth | null;
+  refresh: () => Promise<Auth | null>;
+  login: (email: string, password: string) => Promise<Auth | null>;
   logout: () => Promise<void>;
-}
+};
 
-// Create AuthContext
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({
+  isLoggedIn: false,
+  user: null,
+  auth: null,
+  refresh: async () => null,
+  login: async () => null,
+  logout: async () => {},
+});
 
-// AuthProvider component
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+type Props = {
+  children: React.ReactNode;
+};
 
-  useEffect(() => {
-    // Check for user session on mount
-    const fetchUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      console.log("user", data?.user);
-      if (data?.user) setUser(data.user);
-      if (error) console.error("Error fetching user:", error.message);
-    };
-    fetchUser();
-  }, []);
-
-  // Login function
-  const login = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      return { success: false, message: error.message };
-    }
-
-    setUser(data.user); // Store user in state
-    return { success: true };
-  };
-
-  // Logout function
-  const logout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-  };
+const AuthProvider = ({ children }: Props) => {
+  const { isLoggedIn, isInitialized, auth, user, refresh, login, logout } =
+    useSupabaseAuth();
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        user,
+        auth,
+        refresh,
+        login,
+        logout,
+      }}
+    >
+      {isInitialized ? children : null}
     </AuthContext.Provider>
   );
-}
+};
 
-// Hook to use authentication context
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-}
+export const useAuthContext = () => {
+  return useContext(AuthContext);
+};
+
+export default AuthProvider;

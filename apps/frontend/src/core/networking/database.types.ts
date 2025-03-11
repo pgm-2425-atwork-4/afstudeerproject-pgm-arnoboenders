@@ -38,34 +38,40 @@ export type Database = {
         Row: {
           category_id: number | null
           created_at: string
-          id: number
+          id: string
           ingredients: Json | null
           is_new: boolean
           name: string
+          order_number: number
           price: number
           updated_at: string
+          user_id: string | null
           veggie: boolean
         }
         Insert: {
           category_id?: number | null
           created_at?: string
-          id?: number
+          id?: string
           ingredients?: Json | null
           is_new?: boolean
           name: string
+          order_number?: number
           price: number
           updated_at?: string
+          user_id?: string | null
           veggie?: boolean
         }
         Update: {
           category_id?: number | null
           created_at?: string
-          id?: number
+          id?: string
           ingredients?: Json | null
           is_new?: boolean
           name?: string
+          order_number?: number
           price?: number
           updated_at?: string
+          user_id?: string | null
           veggie?: boolean
         }
         Relationships: [

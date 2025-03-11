@@ -17,8 +17,7 @@ export default function UploadImage() {
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64String = reader.result as string;
-        const image = await updateMenuImage(base64String);
-        console.log("Image uploaded:", image);
+        await updateMenuImage(base64String);
       };
       reader.readAsDataURL(file);
     } finally {
