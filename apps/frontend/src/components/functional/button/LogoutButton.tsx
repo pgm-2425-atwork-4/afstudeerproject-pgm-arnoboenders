@@ -1,8 +1,8 @@
 "use client"; // This makes it interactive
-import { useAuth } from "@/components/context/AuthProvider";
+import { useAuthContext } from "@/components/context/AuthProvider";
 import Button from "@/components/functional/button/Button";
 
 export default function LogoutButton() {
-  const { logout } = useAuth();
+  const { logout } = useAuthContext();
   return <Button text="Logout" onClick={logout} />;
 }
