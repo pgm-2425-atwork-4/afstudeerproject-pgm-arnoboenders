@@ -16,7 +16,9 @@ export default function MenuItemBackOffice({
     <div className="flex justify-between items-center p-4 gap-4 border border-primary200 rounded-lg shadow-md">
       <div className="w-full">
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold">{item.name}</h2>
+          <h2 className="text-lg font-semibold">
+            {item.order_number}. {item.name}
+          </h2>
           <p className="text-sm font-bold min-w-10">€ {item.price}</p>
         </div>
         <p className="text-gray-600 text-sm italic">

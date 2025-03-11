@@ -24,7 +24,6 @@ export const updateMenuItem = async (item: Partial<MenuItem>) => {
     throw new Error("Item ID is required for updating");
   }
 
-
   const updateData: Partial<MenuItem> = {
     ...(item.name && { name: item.name }),
     ...(item.ingredients && { ingredients: item.ingredients }),
@@ -32,16 +31,15 @@ export const updateMenuItem = async (item: Partial<MenuItem>) => {
     ...(item.is_new !== undefined && { is_new: item.is_new }),
     ...(item.veggie !== undefined && { veggie: item.veggie }),
     ...(item.category_id && { category_id: item.category_id }),
+    ...(item.order_number && { order_number: item.order_number }),
     updated_at: new Date().toISOString(),
   };
 
-
- const { data, error } = await supabase
-   .from("menu")
-   .update(updateData)
-   .eq("id", item.id)
-   .select();
-
+  const { data, error } = await supabase
+    .from("menu")
+    .update(updateData)
+    .eq("id", item.id)
+    .select();
 
   if (error) {
     console.error("Supabase Update Error:", error);

@@ -1,3 +1,5 @@
+import Button from "@/components/functional/button/Button";
+import InputField from "@/components/functional/input/InputField";
 import { MenuCategory, MenuItem } from "@/modules/menu/types";
 
 interface ModalProps {
@@ -22,24 +24,28 @@ export default function EditModal({
       {/* Edit Modal */}
       {isEditing && selectedItem && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Edit Menu Item</h2>
-            <label className="block mb-2">Name</label>
-            <input
+          <div className="bg-primary100 p-6 rounded-lg shadow-lg w-96 flex flex-col gap-4">
+            <h2 className="text-xl font-bold">
+              Bewerk &quot;{selectedItem.name}&quot;
+            </h2>
+            <InputField
+              label="Naam"
               type="text"
               value={selectedItem.name}
               onChange={(e) =>
                 setSelectedItem({ ...selectedItem, name: e.target.value })
               }
-              className="w-full p-2 border rounded"
+              placeholder={selectedItem.name}
+              id="name"
+              name="name"
             />
-
-            <label className="block mt-3 mb-2">Ingredients</label>
-            <textarea
+            <InputField
+              label="Ingredienten"
+              type="textarea"
               value={
                 Array.isArray(selectedItem.ingredients)
-                  ? selectedItem.ingredients.join("\n")
-                  : ""
+                  ? selectedItem.ingredients.join(", ")
+                  : (selectedItem.ingredients as string) || ""
               }
               onChange={(e) =>
                 setSelectedItem({
@@ -47,67 +53,98 @@ export default function EditModal({
                   ingredients: e.target.value,
                 })
               }
-              className="w-full p-2 border rounded"
+              placeholder={
+                Array.isArray(selectedItem.ingredients)
+                  ? selectedItem.ingredients.join(", ")
+                  : (selectedItem.ingredients as string) || ""
+              }
+              id="ingredients"
+              name="ingredients"
             />
-
-            <label className="block mt-3 mb-2">Price (€)</label>
-            <input
+            <InputField
+              label="Prijs (€)"
               type="number"
-              value={selectedItem.price}
+              value={selectedItem.price.toString()}
               onChange={(e) =>
                 setSelectedItem({
                   ...selectedItem,
                   price: parseFloat(e.target.value) || 0,
                 })
               }
-              className="w-full p-2 border rounded"
+              placeholder={selectedItem.price.toString()}
+              id="price"
+              name="price"
             />
-            <label className="block mt-3 mb-2">Category</label>
-            <select
-              value={selectedItem.category_id}
+            <InputField
+              label="Categorie"
+              type="select"
+              value={(selectedItem.category_id ?? "").toString()}
               onChange={(e) =>
                 setSelectedItem({
                   ...selectedItem,
                   category_id: parseInt(e.target.value),
                 })
               }
-              className="w-full p-2 border rounded"
+              placeholder="Kies een categorie"
+              id="category_id"
+              name="category_id"
             >
               {categories?.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
                 </option>
               ))}
-            </select>
-            <label className="block mt-3 mb-2">Is New</label>
-            <input
+            </InputField>
+            <InputField
+              label="Is het nieuw?"
               type="checkbox"
-              checked={selectedItem.is_new}
               onChange={(e) =>
-                setSelectedItem({ ...selectedItem, is_new: e.target.checked })
+                setSelectedItem({
+                  ...selectedItem,
+                  is_new: (e.target as HTMLInputElement).checked,
+                })
               }
+              name="is_new"
+              id="is_new"
+              placeholder=""
+              value={selectedItem.is_new.toString()}
             />
-            <label className="block mt-3 mb-2">Veggie</label>
-            <input
+            <InputField
+              label="Veggie"
               type="checkbox"
-              checked={selectedItem.veggie}
               onChange={(e) =>
-                setSelectedItem({ ...selectedItem, veggie: e.target.checked })
+                setSelectedItem({
+                  ...selectedItem,
+                  veggie: (e.target as HTMLInputElement).checked,
+                })
               }
+              name="veggie"
+              id="veggie"
+              placeholder=""
+              value={selectedItem.veggie.toString()}
             />
-            <div className="flex justify-end mt-4">
-              <button
+            <InputField
+              label="Volgorde"
+              type="number"
+              value={selectedItem.order_number.toString()}
+              onChange={(e) =>
+                setSelectedItem({
+                  ...selectedItem,
+                  order_number: parseInt(e.target.value),
+                })
+              }
+              placeholder={selectedItem.order_number.toString()}
+              id="order_number"
+              name="order_number"
+            />
+            <div className="flex justify-between mt-4 gap-4">
+              <Button
                 onClick={() => setIsEditing(false)}
-                className="mr-2 px-4 py-2 bg-gray-300 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-              >
-                Save
-              </button>
+                text="Annuleer"
+                color="bg-red-400"
+                hoverColor="bg-red-900"
+              />
+              <Button onClick={() => handleSave()} text="Opslaan" />
             </div>
           </div>
         </div>

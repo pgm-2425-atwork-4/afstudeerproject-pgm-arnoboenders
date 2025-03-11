@@ -127,15 +127,22 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
       </div>
 
       <div className="space-y-4">
-        {menuItems
-          .sort((a, b) => a.order_number - b.order_number)
-          .map((item) => (
-            <MenuItemBackOffice
-              key={item.id}
-              item={item}
-              onEdit={handleEditClick}
-              onDelete={handleDelete}
-            />
+        {categories &&
+          categories.map((category) => (
+            <div key={category.id} className="flex flex-col gap-4">
+              <h2>{category.name}</h2>
+              {menuItems
+                .filter((item) => item.category_id === category.id)
+                .sort((a, b) => a.order_number - b.order_number)
+                .map((item) => (
+                  <MenuItemBackOffice
+                    key={item.id}
+                    item={item}
+                    onEdit={handleEditClick}
+                    onDelete={handleDelete}
+                  />
+                ))}
+            </div>
           ))}
       </div>
       <CreateModal
