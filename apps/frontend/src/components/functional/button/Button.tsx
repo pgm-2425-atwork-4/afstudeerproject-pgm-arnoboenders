@@ -7,6 +7,8 @@ interface ButtonProps {
   formAction?: string | ((formData: FormData) => Promise<void>);
   onClick?: () => void;
   disabled?: boolean;
+  color?: string;
+  hoverColor?: string;
 }
 
 export default function Button({
@@ -16,10 +18,12 @@ export default function Button({
   formAction,
   onClick,
   disabled,
+  color,
+  hoverColor,
 }: ButtonProps) {
   return (
     <button
-      className="bg-primary hover:bg-primary500 text-white px-6 py-3 rounded-lg flex justify-center items-center gap-2"
+      className={`text-white px-6 py-3 rounded-lg flex justify-center items-center gap-2 ${color ? `${color}` : "bg-primary"} ${hoverColor ? `hover:${hoverColor}` : "hover:bg-primary500"}`}
       type={type}
       formAction={formAction}
       onClick={onClick}

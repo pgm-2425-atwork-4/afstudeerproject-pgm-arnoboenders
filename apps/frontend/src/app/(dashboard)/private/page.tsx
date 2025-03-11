@@ -7,7 +7,6 @@ import { useAuthContext } from "@/components/context/AuthProvider";
 
 export default function PrivatePage() {
   const { user } = useAuthContext();
-  console.log(user);
   if (!user) {
     redirect("/login");
   }

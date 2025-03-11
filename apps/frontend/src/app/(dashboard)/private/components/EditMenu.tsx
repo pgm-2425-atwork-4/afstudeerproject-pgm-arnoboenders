@@ -41,7 +41,7 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
     setIsCreating(true);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
       await deleteMenuItem(id);
       setMenuItems((prevItems) => prevItems.filter((item) => item.id !== id));
@@ -56,9 +56,7 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
       return;
     }
     try {
-      console.log("Updating item:", selectedItem);
-      const updatedItem = await updateMenuItem(owner_id, selectedItem);
-      console.log("Updated item:", updatedItem);
+      const updatedItem = await updateMenuItem(selectedItem);
 
       // Update state with the new data
       setMenuItems((prevItems) =>
@@ -67,7 +65,7 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
         )
       );
     } catch (error) {
-      console.error("Error updating menu item:", error);
+      console.error(error);
     }
     setIsEditing(false);
   };
@@ -78,13 +76,14 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
     }
     try {
       const createdItem = await createMenuItem({
-        owner_id: owner_id,
+        user_id: owner_id,
         name: newItem.name,
         ingredients: newItem.ingredients,
         price: newItem.price,
         is_new: newItem.is_new,
         veggie: newItem.veggie,
         category_id: newItem.category_id,
+        order_number: menuItems.length + 1,
       });
       if (createdItem) {
         setMenuItems((prevItems) => [...prevItems, createdItem]);
@@ -112,13 +111,14 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
           <Button
             onClick={() =>
               handleCreateClick({
-                owner_id: owner_id,
+                user_id: owner_id,
                 name: "",
                 ingredients: [],
                 price: 0,
                 is_new: false,
                 veggie: false,
                 category_id: 0,
+                order_number: 0,
               })
             }
             text="Voeg nieuw gerecht toe"
@@ -128,7 +128,7 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
 
       <div className="space-y-4">
         {menuItems
-          .sort((a, b) => a.id - b.id)
+          .sort((a, b) => a.order_number - b.order_number)
           .map((item) => (
             <MenuItemBackOffice
               key={item.id}

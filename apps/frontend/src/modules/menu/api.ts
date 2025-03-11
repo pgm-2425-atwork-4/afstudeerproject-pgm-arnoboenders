@@ -19,46 +19,29 @@ export const getCategories = async (): Promise<MenuCategory[] | null> => {
   return data;
 };
 
-export const updateMenuItem = async (
-  owner_id: string,
-  item: Partial<MenuItem>
-) => {
+export const updateMenuItem = async (item: Partial<MenuItem>) => {
   if (!item.id) {
     throw new Error("Item ID is required for updating");
   }
 
-  // Check if item exists in the database
-  const { data: existingData, error: fetchError } = await supabase
-    .from("menu")
-    .select("*")
-    .eq("id", item.id)
-    .eq("owner_id", String(owner_id));
 
-  if (fetchError) {
-    console.error("Error fetching existing item:", fetchError);
-    throw new Error(fetchError.message);
-  }
+  const updateData: Partial<MenuItem> = {
+    ...(item.name && { name: item.name }),
+    ...(item.ingredients && { ingredients: item.ingredients }),
+    ...(item.price && { price: item.price }),
+    ...(item.is_new !== undefined && { is_new: item.is_new }),
+    ...(item.veggie !== undefined && { veggie: item.veggie }),
+    ...(item.category_id && { category_id: item.category_id }),
+    updated_at: new Date().toISOString(),
+  };
 
-  if (!existingData || existingData.length === 0) {
-    throw new Error(
-      "No item found with the given ID and owner_id. Double-check the database values."
-    );
-  }
 
-  // Proceed with the update
-  const { data, error } = await supabase
-    .from("menu")
-    .update({
-      name: item.name,
-      ingredients: item.ingredients,
-      price: item.price,
-      is_new: item.is_new,
-      veggie: item.veggie,
-      category_id: item.category_id,
-    })
-    .eq("id", item.id)
-    .eq("owner_id", String(owner_id))
-    .select(); // Ensure updated data is returned
+ const { data, error } = await supabase
+   .from("menu")
+   .update(updateData)
+   .eq("id", item.id)
+   .select();
+
 
   if (error) {
     console.error("Supabase Update Error:", error);
@@ -69,7 +52,7 @@ export const updateMenuItem = async (
     throw new Error("Update failed: No data returned");
   }
 
-  return data[0]; // Return the updated menu item
+  return data[0];
 };
 
 export const createMenuItem = async (item: CreateMenuItem) => {
@@ -83,6 +66,7 @@ export const createMenuItem = async (item: CreateMenuItem) => {
         is_new: item.is_new,
         veggie: item.veggie,
         category_id: item.category_id,
+        user_id: item.user_id,
       },
     ])
     .select();
@@ -92,11 +76,19 @@ export const createMenuItem = async (item: CreateMenuItem) => {
   return data[0];
 };
 
-export const deleteMenuItem = async (item_id: number) => {
+export const deleteMenuItem = async (item_id: string) => {
   const { error } = await supabase.from("menu").delete().eq("id", item_id);
   if (error) {
     throw new Error(error.message);
   }
+};
+
+export const getMenuImage = async () => {
+  const { data, error } = await supabase.from("menu_image").select("*");
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data ? data[0] : null;
 };
 
 export const updateMenuImage = async (image: string) => {
@@ -104,11 +96,12 @@ export const updateMenuImage = async (image: string) => {
 
   // Upload new image
   await uploadImage(Bucket.MENU, image, fileName);
+  console.log("Uploaded image:", fileName);
 
   // Fetch the existing image record
   const { data: existingImage, error: fetchError } = await supabase
     .from("menu_image")
-    .select("id")
+    .select("id, name")
     .order("id", { ascending: true })
     .limit(1)
     .single();
@@ -117,30 +110,38 @@ export const updateMenuImage = async (image: string) => {
     console.error("Error fetching existing menu image:", fetchError);
   }
 
+  console.log("Existing image record:", existingImage);
+
   if (existingImage) {
-    // Update the existing row
+    // Force update by adding an updated_at column
     const { data, error } = await supabase
       .from("menu_image")
-      .update({ name: fileName })
+      .update({
+        name: fileName,
+      })
       .eq("id", existingImage.id)
       .select();
 
     if (error) {
+      console.error("Error updating menu image:", error);
       throw new Error(error.message);
     }
 
-    return data[0];
+    console.log("Updated record:", data);
+    return data;
   } else {
     // If no existing image, insert a new one
     const { data, error } = await supabase
       .from("menu_image")
-      .insert({ name: fileName })
+      .insert([{ name: fileName, updated_at: new Date().toISOString() }])
       .select();
 
     if (error) {
+      console.error("Error inserting new menu image:", error);
       throw new Error(error.message);
     }
 
-    return data[0];
+    console.log("Inserted new record:", data);
+    return data.length ? data[0] : null;
   }
 };

@@ -6,19 +6,16 @@ export const uploadImage = async (
   base64String: string,
   fileName: string
 ) => {
-
   const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
-
-  // Decode Base64 into an ArrayBuffer
-  const arrayBuffer = decode(base64Data);
+  const arrayBuffer = decode(base64Data); // Correctly decode Base64 into an ArrayBuffer
 
   console.log("Uploading to bucket:", bucket);
-  console.log("Decoded array buffer:", arrayBuffer);
   console.log("File name:", fileName);
+
   const { data, error } = await supabase.storage
     .from(bucket)
-    .upload(fileName, decode(base64String), {
-      contentType: "image/jpeg",
+    .upload(fileName, arrayBuffer, {
+      contentType: "image/jpeg", // Adjust as needed
     });
 
   if (error) {
@@ -26,5 +23,6 @@ export const uploadImage = async (
     return Promise.reject(error);
   }
 
+  console.log("Upload success:", data);
   return Promise.resolve(data);
 };

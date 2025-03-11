@@ -1,3 +1,4 @@
+import Button from "@/components/functional/button/Button";
 import { CreateMenuItem, MenuCategory } from "@/modules/menu/types";
 
 interface ModalProps {
@@ -22,9 +23,9 @@ export default function CreateModal({
       {/* Create Modal */}
       {isCreating && newItem && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Create Menu Item</h2>
-            <label className="block mb-2">Name</label>
+          <div className=" flex flex-col gap-4 bg-primary100 p-6 rounded-lg shadow-lg w-96">
+            <h2>Voeg een nieuw gerecht toe</h2>
+            <label className="block">Naam</label>
             <input
               type="text"
               value={newItem.name}
@@ -32,7 +33,7 @@ export default function CreateModal({
               className="w-full p-2 border rounded"
             />
 
-            <label className="block mt-3 mb-2">Ingredients</label>
+            <label className="block">Ingredienten</label>
             <textarea
               value={newItem.ingredients?.join("\n") || ""}
               onChange={(e) =>
@@ -44,7 +45,7 @@ export default function CreateModal({
               className="w-full p-2 border rounded"
             />
 
-            <label className="block mt-3 mb-2">Price (€)</label>
+            <label className="block">Prijs (€)</label>
             <input
               type="number"
               value={newItem.price}
@@ -56,7 +57,7 @@ export default function CreateModal({
               }
               className="w-full p-2 border rounded"
             />
-            <label className="block mt-3 mb-2">Category</label>
+            <label className="block">Categorie</label>
             <select
               value={newItem.category_id}
               onChange={(e) =>
@@ -68,12 +69,15 @@ export default function CreateModal({
               className="w-full p-2 border rounded"
             >
               {categories?.map((category) => (
-                <option key={category.id} value={category.id}>
+                <option
+                  key={`${category.id}-${category.name}`}
+                  value={category.id}
+                >
                   {category.name}
                 </option>
               ))}
             </select>
-            <label className="block mt-3 mb-2">Is New</label>
+            <label className="block">Is het nieuw?</label>
             <input
               type="checkbox"
               checked={newItem.is_new}
@@ -81,7 +85,7 @@ export default function CreateModal({
                 setNewItem({ ...newItem, is_new: e.target.checked })
               }
             />
-            <label className="block mt-3 mb-2">Veggie</label>
+            <label className="block">Veggie</label>
             <input
               type="checkbox"
               checked={newItem.veggie}
@@ -89,19 +93,14 @@ export default function CreateModal({
                 setNewItem({ ...newItem, veggie: e.target.checked })
               }
             />
-            <div className="flex justify-end mt-4">
-              <button
+            <div className="flex justify-between mt-4 gap-4">
+              <Button
                 onClick={() => setIsCreating(false)}
-                className="mr-2 px-4 py-2 bg-gray-300 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleCreate(newItem)}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-              >
-                Save
-              </button>
+                text="Annuleer"
+                color="bg-red-400"
+                hoverColor="bg-red-900"
+              />
+              <Button onClick={() => handleCreate(newItem)} text="Voeg toe" />
             </div>
           </div>
         </div>
