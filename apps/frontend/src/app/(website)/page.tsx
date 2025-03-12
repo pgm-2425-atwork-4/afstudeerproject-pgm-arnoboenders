@@ -9,7 +9,7 @@ import { getMenuItems } from "@/modules/menu/api";
 export default async function Home() {
   const menuItems = await getMenuItems();
   return (
-    <>
+    <div>
       <div className={styles.heroContainer}>
         <Image src="/assets/hero.jpg" alt="Hero Image" fill priority />
         <div
@@ -77,44 +77,34 @@ export default async function Home() {
           <div>
             <h2>Openingsuren</h2>
             <div className="text-lg">
-              <div className="grid grid-cols-3 gap-4">
-                <p>Maandag:</p>
-                <p>Gesloten</p>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <p>Dinsdag:</p>
-                <p>11:30 - 14:00</p>
-                <p>17:30 - 21:30</p>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <p>Woensdag:</p>
-                <p>09:00 - 13:30 (bar)</p>
-                <p>17:30 - 21:30</p>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <p>Donderdag:</p>
-                <p>11:30 - 14:00</p>
-                <p>17:30 - 21:30</p>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <p>Vrijdag:</p>
-                <p>11:30 - 14:00</p>
-                <p>17:30 - 22:00</p>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <p>Zaterdag:</p>
-                <p>-</p>
-                <p>17:30 - 22:00</p>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <p>Zondag:</p>
-                <p>-</p>
-                <p>17:00 - 21:00</p>
-              </div>
+              {[
+                { day: "Maandag", slots: ["Gesloten"] },
+                { day: "Dinsdag", slots: ["11:30 - 14:00", "17:30 - 21:30"] },
+                {
+                  day: "Woensdag",
+                  slots: ["09:00 - 13:30 (bar)", "17:30 - 21:30"],
+                },
+                { day: "Donderdag", slots: ["11:30 - 14:00", "17:30 - 21:30"] },
+                { day: "Vrijdag", slots: ["11:30 - 14:00", "17:30 - 22:00"] },
+                { day: "Zaterdag", slots: ["-", "17:30 - 22:00"] },
+                { day: "Zondag", slots: ["-", "17:00 - 21:00"] },
+              ].map(({ day, slots }) => (
+                <div key={day} className="grid grid-cols-3 gap-4">
+                  <p>{day}:</p>
+                  {slots.map((slot, index) => (
+                    <p
+                      key={index}
+                      className={slot.includes("bar") ? "text-gray-500" : ""}
+                    >
+                      {slot}
+                    </p>
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
