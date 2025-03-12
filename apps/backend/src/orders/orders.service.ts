@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
+import * as dotenv from 'dotenv';
 
-const supabase = createClient(
-  'http://localhost:8000',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNzQwNjk3MjAwLAogICJleHAiOiAxODk4NDYzNjAwCn0.RpkiVthIJn__oXVWlRTZaNfQm6hkTeTdzSDZWBdwndo',
-);
+dotenv.config();
+
+const supabaseUrl = process.env.SUPABASE_URL || '';
+const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 @Injectable()
 export class OrdersService {

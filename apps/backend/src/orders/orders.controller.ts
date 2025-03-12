@@ -8,6 +8,6 @@ export class OrdersController {
   @Post()
   async createOrder(@Body() orderData) {
     const newOrder = await this.ordersService.createOrder(orderData);
-    return { success: true, order: newOrder };
+    return { success: true, order_data: newOrder };
   }
 }
