@@ -90,6 +90,10 @@ export const getMenuImage = async () => {
 };
 
 export const updateMenuImage = async (image: string) => {
+  if (!image) {
+    throw new Error("Image is required for updating");
+  }
+  const { data: { user } } = await supabase.auth.getUser();
   const fileName = `${Date.now()}-menu-image.jpg`;
 
   // Upload new image
@@ -97,26 +101,27 @@ export const updateMenuImage = async (image: string) => {
   console.log("Uploaded image:", fileName);
 
   // Fetch the existing image record
-  const { data: existingImage, error: fetchError } = await supabase
+  const { data: existingImage } = await supabase
     .from("menu_image")
-    .select("id, name")
+    .select("id")
     .order("id", { ascending: true })
     .limit(1)
     .single();
+  console.log("Existing image:", existingImage);  
 
-  if (fetchError) {
-    console.error("Error fetching existing menu image:", fetchError);
-  }
+  const updateData = {
+    name: fileName,
+    updated_at: new Date().toISOString(),
+    user_id: user?.id,
+  };
 
-  console.log("Existing image record:", existingImage);
+  let result;
 
   if (existingImage) {
-    // Force update by adding an updated_at column
+    // Update the existing image record
     const { data, error } = await supabase
       .from("menu_image")
-      .update({
-        name: fileName,
-      })
+      .update(updateData)
       .eq("id", existingImage.id)
       .select();
 
@@ -125,13 +130,12 @@ export const updateMenuImage = async (image: string) => {
       throw new Error(error.message);
     }
 
-    console.log("Updated record:", data);
-    return data;
+    result = data;
   } else {
-    // If no existing image, insert a new one
+    // Insert a new image record
     const { data, error } = await supabase
       .from("menu_image")
-      .insert([{ name: fileName, updated_at: new Date().toISOString() }])
+      .insert([updateData])
       .select();
 
     if (error) {
@@ -139,7 +143,12 @@ export const updateMenuImage = async (image: string) => {
       throw new Error(error.message);
     }
 
-    console.log("Inserted new record:", data);
-    return data.length ? data[0] : null;
+    result = data;
   }
+
+  if (!result || result.length === 0) {
+    throw new Error("Update failed: No data returned");
+  }
+
+  return result[0];
 };
