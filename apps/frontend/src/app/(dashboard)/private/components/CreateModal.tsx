@@ -1,4 +1,5 @@
 import Button from "@/components/functional/button/Button";
+import InputField from "@/components/functional/input/InputField";
 import { CreateMenuItem, MenuCategory } from "@/modules/menu/types";
 
 interface ModalProps {
@@ -25,73 +26,100 @@ export default function CreateModal({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className=" flex flex-col gap-4 bg-primary100 p-6 rounded-lg shadow-lg w-96">
             <h2>Voeg een nieuw gerecht toe</h2>
-            <label className="block">Naam</label>
-            <input
+            <InputField
+              label="Naam"
               type="text"
               value={newItem.name}
-              onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-              className="w-full p-2 border rounded"
+              onChange={(e) =>
+                setNewItem({ ...newItem, name: e.target.value })
+              }
+              placeholder={newItem.name}
+              id="name"
+              name="name"
             />
-
-            <label className="block">Ingredienten</label>
-            <textarea
-              value={newItem.ingredients?.join("\n") || ""}
+            <InputField
+              label="Ingredienten"
+              type="textarea"
+              value={
+                Array.isArray(newItem.ingredients)
+                  ? newItem.ingredients.join(", ")
+                  : (newItem.ingredients as string) || ""
+              }
               onChange={(e) =>
                 setNewItem({
                   ...newItem,
-                  ingredients: e.target.value.split("\n"),
+                  ingredients: e.target.value,
                 })
               }
-              className="w-full p-2 border rounded"
+              placeholder={
+                Array.isArray(newItem.ingredients)
+                  ? newItem.ingredients.join(", ")
+                  : (newItem.ingredients as string) || ""
+              }
+              id="ingredients"
+              name="ingredients"
             />
-
-            <label className="block">Prijs (€)</label>
-            <input
+            <InputField
+              label="Prijs (€)"
               type="number"
-              value={newItem.price}
+              value={newItem.price.toString()}
               onChange={(e) =>
                 setNewItem({
                   ...newItem,
                   price: parseFloat(e.target.value) || 0,
                 })
               }
-              className="w-full p-2 border rounded"
+              placeholder={newItem.price.toString()}
+              id="price"
+              name="price"
             />
-            <label className="block">Categorie</label>
-            <select
-              value={newItem.category_id}
+            <InputField
+              label="Categorie"
+              type="select"
+              value={(newItem.category_id ?? "").toString()}
               onChange={(e) =>
                 setNewItem({
                   ...newItem,
                   category_id: parseInt(e.target.value),
                 })
               }
-              className="w-full p-2 border rounded"
+              placeholder="Kies een categorie"
+              id="category_id"
+              name="category_id"
             >
               {categories?.map((category) => (
-                <option
-                  key={`${category.id}-${category.name}`}
-                  value={category.id}
-                >
+                <option key={category.id} value={category.id}>
                   {category.name}
                 </option>
               ))}
-            </select>
-            <label className="block">Is het nieuw?</label>
-            <input
+            </InputField>
+            <InputField
+              label="Is het nieuw?"
               type="checkbox"
-              checked={newItem.is_new}
               onChange={(e) =>
-                setNewItem({ ...newItem, is_new: e.target.checked })
+                setNewItem({
+                  ...newItem,
+                  is_new: (e.target as HTMLInputElement).checked,
+                })
               }
+              name="is_new"
+              id="is_new"
+              placeholder=""
+              value={newItem.is_new.toString()}
             />
-            <label className="block">Veggie</label>
-            <input
+            <InputField
+              label="Veggie"
               type="checkbox"
-              checked={newItem.veggie}
               onChange={(e) =>
-                setNewItem({ ...newItem, veggie: e.target.checked })
+                setNewItem({
+                  ...newItem,
+                  veggie: (e.target as HTMLInputElement).checked,
+                })
               }
+              name="veggie"
+              id="veggie"
+              placeholder=""
+              value={newItem.veggie.toString()}
             />
             <div className="flex justify-between mt-4 gap-4">
               <Button
