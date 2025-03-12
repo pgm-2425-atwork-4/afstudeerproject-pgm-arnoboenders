@@ -3,11 +3,12 @@
 import { useOrders } from "@/components/context/OrderProvider";
 import Button from "@/components/functional/button/Button";
 import { createOrder } from "@/modules/order/api";
+import { Trash2 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useState } from "react";
 
 interface Order {
-  id: number;
+  id: string;
   amount: number;
   price: number;
   name: string;
@@ -24,7 +25,6 @@ interface OrderBoxProps {
 
 const aggregateOrders = (orders: Order[]): Order[] => {
   return orders.reduce<Order[]>((acc, order) => {
-    // Find an exact match with id, size, and pastaType
     const existingOrder = acc.find(
       (o) =>
         o.id === order.id &&
@@ -33,10 +33,13 @@ const aggregateOrders = (orders: Order[]): Order[] => {
     );
 
     if (existingOrder) {
-      existingOrder.amount += order.amount; // Increase amount if same variant exists
-      existingOrder.price += order.price * order.amount; // Update price accordingly
+      existingOrder.amount += order.amount; // Increase amount
     } else {
-      acc.push({ ...order, amount: Number(order.amount) || 1 });
+      acc.push({
+        ...order,
+        amount: Number(order.amount) || 1,
+        price: order.price,
+      });
     }
     return acc;
   }, []);
@@ -47,7 +50,7 @@ export default function OrderBox({
   showForm = false,
   buttonText = "Bestel",
 }: OrderBoxProps) {
-  const { orders, emptyOrders } = useOrders();
+  const { orders, emptyOrders, removeOrder } = useOrders();
   const aggregatedOrders = aggregateOrders(orders);
 
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -94,17 +97,23 @@ export default function OrderBox({
   return (
     <div
       className={`${
-        layout === "sticky" ? "sticky top-8 gap-4" : "w-full p-8 gap-8"
+        layout === "sticky" ? "sticky top-8 gap-4 w-full" : "w-full p-8 gap-8"
       } flex flex-col justify-center`}
     >
       <h2>Bestelling</h2>
       {aggregatedOrders.map(({ id, amount, price, name }) => (
         <div key={`${id}-${name}`} className="flex justify-between gap-4">
-          <div className="flex gap-4">
-            <p>{amount}x</p>
-            <p>{name}</p>
+          <div className="flex justify-between w-full">
+            <div className="flex gap-4">
+              <p>{amount}x</p>
+              <p>{name}</p>
+            </div>
+            <p className="min-w-14">€ {price.toFixed(2)}</p>
           </div>
-          <p>€ {price.toFixed(2)}</p>
+
+          <button onClick={() => removeOrder(id.toString())}>
+            <Trash2 className="text-red-500" />
+          </button>
         </div>
       ))}
 

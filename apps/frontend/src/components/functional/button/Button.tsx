@@ -3,6 +3,7 @@
 interface ButtonProps {
   text: string;
   icon?: React.ReactNode;
+  number?: number;
   type?: "button" | "submit" | "reset";
   formAction?: string | ((formData: FormData) => Promise<void>);
   onClick?: () => void;
@@ -13,6 +14,7 @@ interface ButtonProps {
 
 export default function Button({
   icon,
+  number = 0,
   text,
   type,
   formAction,
@@ -30,6 +32,11 @@ export default function Button({
       disabled={disabled}
     >
       {icon}
+      {number > 0 && (
+          <div className="bg-white px-2 rounded-full text-primary font-bold">
+            {number}
+          </div>
+        )}
       {text}
     </button>
   );

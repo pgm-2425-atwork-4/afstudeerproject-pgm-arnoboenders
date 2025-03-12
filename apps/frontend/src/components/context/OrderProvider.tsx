@@ -11,7 +11,7 @@ interface Order extends MenuItem {
 interface OrderContextProps {
   orders: Order[];
   addOrder: (menuItems: Order[]) => void;
-  removeOrder: (id: number) => void;
+  removeOrder: (id: string) => void;
   emptyOrders: () => void;
 }
 
@@ -25,7 +25,6 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
       const updatedOrders = prevOrders.map((order) => ({ ...order })); // Create a new copy of orders
 
       newItems.forEach((newItem) => {
-        // Check if an exact match exists
         const existingIndex = updatedOrders.findIndex(
           (order) =>
             order.id === newItem.id &&
@@ -34,14 +33,15 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
         );
 
         if (existingIndex !== -1) {
-          // If the order exists, increase quantity
+          // If the order exists, increase quantity and update price correctly
           updatedOrders[existingIndex] = {
             ...updatedOrders[existingIndex],
             amount: updatedOrders[existingIndex].amount + 1,
+            price: newItem.price * (updatedOrders[existingIndex].amount + 1), // Update price based on new amount
           };
         } else {
           // If not, add it as a new order line
-          updatedOrders.push({ ...newItem, amount: 1 });
+          updatedOrders.push({ ...newItem, amount: 1, price: newItem.price });
         }
       });
 
@@ -49,8 +49,19 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const removeOrder = (id: number) => {
-    setOrders((prevOrders) => prevOrders.filter((order) => order.id !== id));
+  const removeOrder = (id: string) => {
+    setOrders((prevOrders) =>
+      prevOrders.map((order) => {
+      if (order.id === id) {
+        if (order.amount > 1) {
+        return { ...order, amount: order.amount - 1, price: order.price - order.price / order.amount };
+        } else {
+        return null;
+        }
+      }
+      return order;
+      }).filter(order => order !== null)
+    );
   };
 
   const emptyOrders = () => {
