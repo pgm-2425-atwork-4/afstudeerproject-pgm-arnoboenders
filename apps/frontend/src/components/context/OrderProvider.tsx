@@ -11,7 +11,7 @@ interface Order extends MenuItem {
 interface OrderContextProps {
   orders: Order[];
   addOrder: (menuItems: Order[]) => void;
-  removeOrder: (id: number) => void;
+  removeOrder: (id: string) => void;
   emptyOrders: () => void;
 }
 
@@ -49,7 +49,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const removeOrder = (id: number) => {
+  const removeOrder = (id: string) => {
     setOrders((prevOrders) => prevOrders.filter((order) => order.id !== id));
   };
 

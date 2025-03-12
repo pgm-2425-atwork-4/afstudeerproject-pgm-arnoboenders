@@ -7,10 +7,14 @@ import { Menu, X } from "lucide-react";
 import Button from "@/components/functional/button/Button";
 import MobileNav from "./MobileNav";
 import styles from "./navigation.module.css";
+import { useOrders } from "@/components/context/OrderProvider";
 
 export default function Navigation() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { orders } = useOrders();
+
+  const totalOrders = orders.reduce((acc, order) => acc + order.amount, 0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -46,7 +50,7 @@ export default function Navigation() {
           {/* Right Section - Order Button & Mobile Menu */}
           <div className="flex items-center gap-4 sm:gap-6 flex-shrink-0 sm:px-4 relative">
             <Link href="/order">
-              <Button text="Bestel nu" />
+              <Button number={totalOrders} text="Bestel nu" />
             </Link>
 
             {/* Mobile Menu Button */}
