@@ -98,7 +98,6 @@ export const updateMenuImage = async (image: string) => {
 
   // Upload new image
   await uploadImage(Bucket.MENU, image, fileName);
-  console.log("Uploaded image:", fileName);
 
   // Fetch the existing image record
   const { data: existingImage } = await supabase
@@ -107,7 +106,6 @@ export const updateMenuImage = async (image: string) => {
     .order("id", { ascending: true })
     .limit(1)
     .single();
-  console.log("Existing image:", existingImage);  
 
   const updateData = {
     name: fileName,

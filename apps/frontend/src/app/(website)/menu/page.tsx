@@ -4,9 +4,8 @@ import { getMenuImageUrl } from "@/modules/storage/utils";
 import Image from "next/image";
 
 export default async function Menu() {
-  const menuItems = await getMenuItems(); // Fetch on the server
-  const menuImage = await getMenuImage(); // Fetch on the server
-  console.log(menuImage);
+  const menuItems = await getMenuItems();
+  const menuImage = await getMenuImage(); 
   return (
     <div className="container mt-32 mb-20">
       <h1>Menu</h1>
