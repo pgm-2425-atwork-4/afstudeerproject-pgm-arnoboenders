@@ -71,10 +71,11 @@ export default function OrderBox({
 
     const orderData = {
       price: aggregatedOrders.reduce((acc, order) => acc + order.price, 0), // Total price
-      order: aggregatedOrders.map(({ id, amount, name }) => ({
+      order_data: aggregatedOrders.map(({ id, amount, name, price }) => ({
         id,
         amount,
         name,
+        price,
       })), // Order details
       name: customerName,
       phone_number: phoneNumber,
