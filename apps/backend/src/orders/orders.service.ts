@@ -15,4 +15,9 @@ export class OrdersService {
     if (error) throw error;
     return data;
   }
+  async updateOrder(orderData) {
+    const { data, error } = await supabase.from('orders').update(orderData);
+    if (error) throw error;
+    return data;
+  }
 }
