@@ -20,7 +20,6 @@ export default function PrivatePage() {
       <h1 className="my-8">Beheer Menu</h1>
 
       <div className="my-8 flex flex-col gap-8">
-        
         <EditMenu owner_id={user.id} />
       </div>
     </div>
