@@ -1,3 +1,4 @@
+import { supabase } from "@/core/networking/api";
 import { Order } from "./types";
 
 export const createOrder = async (
@@ -10,4 +11,15 @@ export const createOrder = async (
   });
 
   return response.json();
+};
+
+export const fetchOrders = async (): Promise<Order[] | null> => {
+  const { data, error } = await supabase.from("orders").select("*");
+
+  if (error) {
+    console.error("Error fetching orders:", error);
+    return null;
+  }
+
+  return Promise.resolve(data);
 };
