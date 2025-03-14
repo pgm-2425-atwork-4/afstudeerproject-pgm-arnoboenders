@@ -27,7 +27,7 @@ export default async function Home() {
       <div className="container mx-auto my-10">
         <h2>Nieuw deze maand</h2>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="flex gap-8 overflow-x-auto">
           {menuItems &&
             menuItems
               .filter((item) => item.is_new)
@@ -46,7 +46,7 @@ export default async function Home() {
             height={300}
             className="shadow-xl"
           />
-          <p className="max-w-md text-lg">
+          <p className="max-w-md text-xl">
             🧑‍🍳 Eerlijke pasta, pure smaak Bij Loos draait alles om eenvoud en
             kwaliteit. Heerlijke pasta, gemaakt met verse ingrediënten Ontdek
             ons menu{" "}
@@ -55,7 +55,7 @@ export default async function Home() {
             </Link>
           </p>
 
-          <p className="max-w-md text-lg">
+          <p className="max-w-md text-xl">
             📍 Geen reservatie nodig Loop gewoon binnen en geniet. Voor groepen
             vanaf 6 personen kan je wel reserveren.
           </p>
