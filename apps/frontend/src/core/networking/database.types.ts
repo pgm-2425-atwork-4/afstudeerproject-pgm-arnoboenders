@@ -162,6 +162,33 @@ export type Database = {
         }
         Relationships: []
       }
+      takeaway_time_slots: {
+        Row: {
+          current_orders: number
+          day_of_week: string
+          id: number
+          is_takeaway_available: boolean | null
+          max_orders: number
+          time_slot: string
+        }
+        Insert: {
+          current_orders?: number
+          day_of_week: string
+          id?: number
+          is_takeaway_available?: boolean | null
+          max_orders?: number
+          time_slot: string
+        }
+        Update: {
+          current_orders?: number
+          day_of_week?: string
+          id?: number
+          is_takeaway_available?: boolean | null
+          max_orders?: number
+          time_slot?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

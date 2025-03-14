@@ -2,10 +2,16 @@
 
 import { useOrders } from "@/components/context/OrderProvider";
 import Button from "@/components/functional/button/Button";
-import { createOrder } from "@/modules/order/api";
+import {
+  assignTimeSlot,
+  createOrder,
+  fetchAvailableTimeSlots,
+} from "@/modules/order/api";
+
 import { Trash2 } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Order {
   id: string;
@@ -53,12 +59,21 @@ export default function OrderBox({
   const { orders, emptyOrders, removeOrder } = useOrders();
   const aggregatedOrders = aggregateOrders(orders);
 
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [customerName, setCustomerName] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
 
-  // Example Time Slots
-  const timeSlots = ["12:00", "12:30", "13:00", "13:30", "14:00"];
+  // Fetch available takeaway slots
+  useEffect(() => {
+    const loadTimeSlots = async () => {
+      const slots = await fetchAvailableTimeSlots();
+      setAvailableTimeSlots(slots);
+    };
+
+    loadTimeSlots();
+  }, []);
+  console.log("availableTimeSlots", availableTimeSlots);
 
   // Submit Order
   const handleSubmit = async (event: React.FormEvent) => {
@@ -87,8 +102,10 @@ export default function OrderBox({
       const response = await createOrder(orderData);
       console.log("response", response);
 
+      // Assign takeaway time slot in the database
+      await assignTimeSlot(selectedTime);
+
       console.log("Bestelling geplaatst:", response);
-      // redirect(paymentUrl);
       emptyOrders();
     } catch (error) {
       console.error("Fout bij het plaatsen van de bestelling:", error);
@@ -131,21 +148,28 @@ export default function OrderBox({
       {layout === "fullwidth" && (
         <div className="mt-4">
           <h3 className="mb-2">Kies een afhaaltijd:</h3>
-          <div className="flex gap-2 flex-wrap">
-            {timeSlots.map((time) => (
-              <button
-                key={time}
-                onClick={() => setSelectedTime(time)}
-                className={`p-2 border rounded ${
-                  selectedTime === time
-                    ? "bg-primary text-white"
-                    : "bg-primary200 hover:bg-primary"
-                }`}
-              >
-                {time}
-              </button>
-            ))}
-          </div>
+          {availableTimeSlots.length === 0 ? (
+            <p>
+              We zijn momenteel gesloten bekijk de openingsuren op
+              <Link href={'/contact'} className="text-primary hover:underline"> deze pagina </Link>
+            </p>
+          ) : (
+            <div className="flex gap-2 flex-wrap">
+              {availableTimeSlots.map((time) => (
+                <button
+                  key={time}
+                  onClick={() => setSelectedTime(time)}
+                  className={`p-2 border rounded ${
+                    selectedTime === time
+                      ? "bg-primary text-white"
+                      : "bg-primary200 hover:bg-primary"
+                  }`}
+                >
+                  {time}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -175,11 +199,7 @@ export default function OrderBox({
           {selectedTime && (
             <p className="text-green-600">Afhaal tijd: {selectedTime}</p>
           )}
-          <Button
-            text={buttonText}
-            type="submit"
-            onClick={() => handleSubmit}
-          />
+          <Button text={buttonText} type="submit" />
         </form>
       ) : (
         <Button text={buttonText} onClick={() => redirect("order/overview")} />
