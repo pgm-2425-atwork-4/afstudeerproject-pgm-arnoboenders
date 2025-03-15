@@ -56,13 +56,7 @@ export class TakeawayService {
           continue;
         }
 
-        let formattedTime = format(slotTime, 'HH:mm');
-
-        // If order size > 8, shift time by 30 minutes
-        if (orderSize > 8) {
-          const adjustedTime = addMinutes(slotTime, 30);
-          formattedTime = format(adjustedTime, 'HH:mm');
-        }
+        const formattedTime = format(slotTime, 'HH:mm');
 
         availableSlots.push(formattedTime);
       }
