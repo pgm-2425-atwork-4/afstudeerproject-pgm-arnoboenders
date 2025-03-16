@@ -15,7 +15,6 @@ export class OrdersService {
       .from('orders')
       .insert(orderData)
       .select();
-    console.log(data);
     if (error) throw error;
     return data || [];
   }

@@ -94,17 +94,15 @@ export class TakeawayService {
     // Fetch the time slot
     const { data: slot, error } = await supabase
       .from('takeaway_time_slots')
-      .select('current_orders, max_orders')
+      .select('id, time_slot, current_orders, max_orders')
       .eq('day_of_week', today)
       .eq('is_takeaway_available', true)
       .eq('time_slot', timeSlot.time_slot)
-      .single();
+      .single<TakeawaySlot>();
 
     if (error || !slot) {
       throw new BadRequestException('Time slot not found');
     }
-
-    console.log('Slot:', slot);
 
     // Fetch the order details
     const { data: order, error: orderError } = await supabase
@@ -117,15 +115,11 @@ export class TakeawayService {
       throw new BadRequestException('Order not found');
     }
 
-    console.log('Order:', order);
-
     // Calculate total items in the order
-
     const totalItems: number = (order as Order).order_data.reduce(
       (sum: number, item: OrderItem) => sum + item.amount,
       0,
     );
-    console.log('Total Items:', totalItems);
 
     // Determine how many slots to count (1 for small orders, 2 for large)
     const orderIncrement = totalItems > 8 ? 2 : 1;
@@ -135,10 +129,12 @@ export class TakeawayService {
       throw new BadRequestException('Time slot is full');
     }
 
-    // Update the takeaway slot
+    // Ensure TypeScript correctly infers `current_orders` as a number
+    const newOrdersCount: number = slot.current_orders + orderIncrement;
+
     const { error: updateError } = await supabase
       .from('takeaway_time_slots')
-      .update({ current_orders: slot.current_orders + orderIncrement })
+      .update({ current_orders: newOrdersCount })
       .eq('day_of_week', today)
       .eq('time_slot', timeSlot.time_slot);
 
