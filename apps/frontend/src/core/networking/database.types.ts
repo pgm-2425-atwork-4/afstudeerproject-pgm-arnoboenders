@@ -137,7 +137,7 @@ export type Database = {
           order_data: Json
           phone_number: string
           price: number
-          take_away_time: string
+          take_away_time: number | null
           updated_at: string
         }
         Insert: {
@@ -147,7 +147,7 @@ export type Database = {
           order_data: Json
           phone_number: string
           price: number
-          take_away_time: string
+          take_away_time?: number | null
           updated_at?: string
         }
         Update: {
@@ -157,8 +157,43 @@ export type Database = {
           order_data?: Json
           phone_number?: string
           price?: number
-          take_away_time?: string
+          take_away_time?: number | null
           updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_take_away_time_fkey"
+            columns: ["take_away_time"]
+            isOneToOne: false
+            referencedRelation: "takeaway_time_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      takeaway_time_slots: {
+        Row: {
+          current_orders: number
+          day_of_week: string
+          id: number
+          is_takeaway_available: boolean | null
+          max_orders: number
+          time_slot: string
+        }
+        Insert: {
+          current_orders?: number
+          day_of_week: string
+          id?: number
+          is_takeaway_available?: boolean | null
+          max_orders?: number
+          time_slot: string
+        }
+        Update: {
+          current_orders?: number
+          day_of_week?: string
+          id?: number
+          is_takeaway_available?: boolean | null
+          max_orders?: number
+          time_slot?: string
         }
         Relationships: []
       }
