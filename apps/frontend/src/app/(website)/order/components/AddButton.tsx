@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useOrders } from "@/components/context/OrderProvider";
-import { MenuItem } from "@/modules/menu/types";
+import { MenuItem, Size, Pasta } from "@/modules/menu/types";
 import { Plus } from "lucide-react";
 
 export default function AddButton({ menuItem }: { menuItem: MenuItem }) {
@@ -11,12 +11,12 @@ export default function AddButton({ menuItem }: { menuItem: MenuItem }) {
   const [selectedPasta, setSelectedPasta] = useState("Spaghetti");
   const [adjustedPrice, setAdjustedPrice] = useState(menuItem.price);
 
-  const handleSizeChange = (size: string) => {
+  const handleSizeChange = (size: Size) => {
     let newPrice = menuItem.price;
-    if (size === "Kinder") newPrice -= 1;
-    if (size === "Maxi") newPrice += 1;
+    if (size.name === "Kinder") newPrice -= 1;
+    if (size.name === "Maxi") newPrice += 1;
 
-    setSelectedSize(size);
+    setSelectedSize(size.name);
     setAdjustedPrice(newPrice);
   };
 
@@ -39,14 +39,13 @@ export default function AddButton({ menuItem }: { menuItem: MenuItem }) {
         name: customizedName,
         amount: 1,
         size: selectedSize,
-        pastaType: selectedPasta,
+        pasta: selectedPasta,
         price: adjustedPrice,
       },
     ]);
 
     setShowOverlay(false);
   };
-
   return (
     <>
       <button
@@ -64,44 +63,47 @@ export default function AddButton({ menuItem }: { menuItem: MenuItem }) {
             {/* Size Selection */}
             <label className="block mb-2">Grootte</label>
             <div className="mb-4">
-              {[
-                { label: "Kinder", priceChange: "-1€" },
-                { label: "Normaal", priceChange: "" },
-                { label: "Maxi", priceChange: "+1€" },
-              ].map(({ label, priceChange }) => (
-                <label key={label} className="flex items-center mb-2">
-                  <input
-                    type="radio"
-                    name="size"
-                    value={label}
-                    checked={selectedSize === label}
-                    onChange={() => handleSizeChange(label)}
-                    className="mr-2"
-                  />
-                  {label}{" "}
-                  {priceChange && (
-                    <span className="text-gray-500 ml-2">({priceChange})</span>
-                  )}
-                </label>
-              ))}
+              {Array.isArray(menuItem.size) &&
+                (menuItem.size as Size[]).map((size) => (
+                  <label
+                    key={size.name}
+                    className="flex items-center mb-2"
+                  >
+                    <input
+                      type="radio"
+                      name="size"
+                      value={size.name}
+                      checked={selectedSize === size.name}
+                      onChange={() => handleSizeChange(size)}
+                      className="mr-2"
+                    />
+                    {size.name}{" "}
+                    {size.priceChange !== undefined && (
+                      <span className="text-gray-500 ml-2">
+                        € {size.priceChange}
+                      </span>
+                    )}
+                  </label>
+                ))}
             </div>
 
             {/* Pasta Type Selection */}
             <label className="block mb-2">Type pasta</label>
             <div className="mb-4">
-              {["Spaghetti", "Volkoren", "Gluttenvrij"].map((pasta) => (
-                <label key={pasta} className="flex items-center mb-2">
-                  <input
-                    type="radio"
-                    name="pasta"
-                    value={pasta}
-                    checked={selectedPasta === pasta}
-                    onChange={(e) => setSelectedPasta(e.target.value)}
-                    className="mr-2"
-                  />
-                  {pasta}
-                </label>
-              ))}
+              {Array.isArray(menuItem.pasta) &&
+                (menuItem.pasta as Pasta[]).map((pasta) => (
+                  <label key={String(pasta)} className="flex items-center mb-2">
+                    <input
+                      type="radio"
+                      name="pasta"
+                      value={String(pasta)}
+                      checked={selectedPasta === String(pasta)}
+                      onChange={(e) => setSelectedPasta(e.target.value)}
+                      className="mr-2"
+                    />
+                    {String(pasta)}
+                  </label>
+                ))}
             </div>
 
             {/* Display Adjusted Price */}
