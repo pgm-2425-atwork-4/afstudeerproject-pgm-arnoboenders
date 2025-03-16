@@ -137,7 +137,7 @@ export type Database = {
           order_data: Json
           phone_number: string
           price: number
-          take_away_time: string
+          take_away_time: number | null
           updated_at: string
         }
         Insert: {
@@ -147,7 +147,7 @@ export type Database = {
           order_data: Json
           phone_number: string
           price: number
-          take_away_time: string
+          take_away_time?: number | null
           updated_at?: string
         }
         Update: {
@@ -157,10 +157,18 @@ export type Database = {
           order_data?: Json
           phone_number?: string
           price?: number
-          take_away_time?: string
+          take_away_time?: number | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orders_take_away_time_fkey"
+            columns: ["take_away_time"]
+            isOneToOne: false
+            referencedRelation: "takeaway_time_slots"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       takeaway_time_slots: {
         Row: {

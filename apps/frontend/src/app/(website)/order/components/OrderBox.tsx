@@ -7,6 +7,7 @@ import {
   createOrder,
   fetchAvailableTimeSlots,
 } from "@/modules/order/api";
+import { TimeSlot } from "@/modules/time-slots/types";
 
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -59,20 +60,24 @@ export default function OrderBox({
   const { orders, emptyOrders, removeOrder } = useOrders();
   const aggregatedOrders = aggregateOrders(orders);
 
-  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<TimeSlot[]>([]);
+  const [selectedTime, setSelectedTime] = useState<number | null>(null);
   const [customerName, setCustomerName] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const totalOrders = orders.reduce((acc, order) => acc + order.amount, 0);
 
   // Fetch available takeaway slots
   useEffect(() => {
     const loadTimeSlots = async () => {
       const slots = await fetchAvailableTimeSlots();
+      if (totalOrders > 8 && slots[0]?.current_orders >= 3) {
+        slots.shift(); // Remove the first item if totalOrders is above 8
+      }
       setAvailableTimeSlots(slots);
     };
 
     loadTimeSlots();
-  }, []);
+  }, [totalOrders]);
   console.log("availableTimeSlots", availableTimeSlots);
 
   // Submit Order
@@ -81,6 +86,14 @@ export default function OrderBox({
 
     if (!customerName || !phoneNumber || !selectedTime) {
       alert("Vul alle velden in voordat je bestelt!");
+      return;
+    }
+
+    const selectedSlot = availableTimeSlots.find(
+      (slot) => slot.id === selectedTime
+    );
+    if (!selectedSlot) {
+      alert("Ongeldige afhaaltijd geselecteerd!");
       return;
     }
 
@@ -94,16 +107,16 @@ export default function OrderBox({
       })), // Order details
       name: customerName,
       phone_number: phoneNumber,
-      take_away_time: selectedTime,
+      take_away_time: selectedSlot.id, // Pass the full object instead
     };
 
     try {
-      console.log("orderData", orderData);
       const response = await createOrder(orderData);
-      console.log("response", response);
 
       // Assign takeaway time slot in the database
-      await assignTimeSlot(selectedTime);
+      if (response && response.order_data) {
+        await assignTimeSlot(selectedSlot, String(response.order_data[0].id));
+      }
 
       console.log("Bestelling geplaatst:", response);
       emptyOrders();
@@ -151,21 +164,24 @@ export default function OrderBox({
           {availableTimeSlots.length === 0 ? (
             <p>
               We zijn momenteel gesloten bekijk de openingsuren op
-              <Link href={'/contact'} className="text-primary hover:underline"> deze pagina </Link>
+              <Link href={"/contact"} className="text-primary hover:underline">
+                {" "}
+                deze pagina{" "}
+              </Link>
             </p>
           ) : (
             <div className="flex gap-2 flex-wrap">
               {availableTimeSlots.map((time) => (
                 <button
-                  key={time}
-                  onClick={() => setSelectedTime(time)}
+                  key={time.id}
+                  onClick={() => setSelectedTime(time.id)}
                   className={`p-2 border rounded ${
-                    selectedTime === time
+                    selectedTime === time.id
                       ? "bg-primary text-white"
                       : "bg-primary200 hover:bg-primary"
                   }`}
                 >
-                  {time}
+                  {time.time_slot}
                 </button>
               ))}
             </div>
@@ -196,9 +212,6 @@ export default function OrderBox({
               onChange={(e) => setPhoneNumber(e.target.value)}
             />
           </label>
-          {selectedTime && (
-            <p className="text-green-600">Afhaal tijd: {selectedTime}</p>
-          )}
           <Button text={buttonText} type="submit" />
         </form>
       ) : (

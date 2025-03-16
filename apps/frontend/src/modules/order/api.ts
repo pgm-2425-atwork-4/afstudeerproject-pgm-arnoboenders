@@ -1,5 +1,6 @@
 import { supabase } from "@/core/networking/api";
 import { Order } from "./types";
+import { TimeSlot } from "../time-slots/types";
 
 export const createOrder = async (
   orderData: Partial<Order>
@@ -24,7 +25,7 @@ export const fetchOrders = async (): Promise<Order[] | null> => {
   return Promise.resolve(data);
 };
 
-export const fetchAvailableTimeSlots = async (): Promise<string[]> => {
+export const fetchAvailableTimeSlots = async (): Promise<TimeSlot[]> => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/takeaway-times`
@@ -37,14 +38,17 @@ export const fetchAvailableTimeSlots = async (): Promise<string[]> => {
   }
 };
 
-export const assignTimeSlot = async (timeSlot: string): Promise<void> => {
+export const assignTimeSlot = async (
+  timeSlot: TimeSlot,
+  orderId: string
+): Promise<void> => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/takeaway-times/assign`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ timeSlot }),
+        body: JSON.stringify({ timeSlot, orderId }),
       }
     );
 

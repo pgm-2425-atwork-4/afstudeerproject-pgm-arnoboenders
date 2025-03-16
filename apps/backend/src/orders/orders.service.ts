@@ -10,14 +10,18 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 @Injectable()
 export class OrdersService {
-  async createOrder(orderData) {
-    const { data, error } = await supabase.from('orders').insert(orderData);
+  async createOrder(orderData): Promise<any[]> {
+    const { data, error } = await supabase
+      .from('orders')
+      .insert(orderData)
+      .select();
+    console.log(data);
     if (error) throw error;
-    return data;
+    return data || [];
   }
-  async updateOrder(orderData) {
+  async updateOrder(orderData): Promise<any[]> {
     const { data, error } = await supabase.from('orders').update(orderData);
     if (error) throw error;
-    return data;
+    return data || [];
   }
 }
