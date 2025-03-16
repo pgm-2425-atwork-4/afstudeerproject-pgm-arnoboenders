@@ -1,11 +1,12 @@
 "use client";
+import { Json } from "@/core/networking/database.types";
 import { MenuItem } from "@/modules/menu/types";
 import React, { createContext, useState, useContext, ReactNode } from "react";
 
 interface Order extends MenuItem {
   amount: number;
-  size?: string;
-  pastaType?: string;
+  size: Json;
+  pasta: Json;
 }
 
 interface OrderContextProps {
@@ -29,7 +30,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
           (order) =>
             order.id === newItem.id &&
             order.size === newItem.size &&
-            order.pastaType === newItem.pastaType
+            order.pasta === newItem.pasta
         );
 
         if (existingIndex !== -1) {

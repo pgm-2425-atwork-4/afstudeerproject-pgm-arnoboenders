@@ -2,26 +2,19 @@
 
 import { useOrders } from "@/components/context/OrderProvider";
 import Button from "@/components/functional/button/Button";
+import { Pasta, Size } from "@/modules/menu/types";
 import {
   assignTimeSlot,
   createOrder,
   fetchAvailableTimeSlots,
 } from "@/modules/order/api";
+import { OrderItem } from "@/modules/order/types";
 import { TimeSlot } from "@/modules/time-slots/types";
 
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
-
-interface Order {
-  id: string;
-  amount: number;
-  price: number;
-  name: string;
-  size?: string;
-  pastaType?: string;
-}
 
 interface OrderBoxProps {
   layout?: "sticky" | "fullwidth";
@@ -30,17 +23,17 @@ interface OrderBoxProps {
   buttonAction?: () => void;
 }
 
-const aggregateOrders = (orders: Order[]): Order[] => {
-  return orders.reduce<Order[]>((acc, order) => {
+const aggregateOrders = (orders: OrderItem[]): OrderItem[] => {
+  return orders.reduce<OrderItem[]>((acc, order) => {
     const existingOrder = acc.find(
       (o) =>
         o.id === order.id &&
-        o.size === order.size &&
-        o.pastaType === order.pastaType
+        o.size?.name === order.size?.name && // Ensure size is compared correctly
+        o.pasta?.pasta === order.pasta?.pasta // Ensure pasta type is compared correctly
     );
 
     if (existingOrder) {
-      existingOrder.amount += order.amount; // Increase amount
+      existingOrder.amount += order.amount;
     } else {
       acc.push({
         ...order,
@@ -57,7 +50,12 @@ export default function OrderBox({
   showForm = false,
   buttonText = "Bestel",
 }: OrderBoxProps) {
-  const { orders, emptyOrders, removeOrder } = useOrders();
+  const { orders: rawOrders, emptyOrders, removeOrder } = useOrders();
+  const orders: OrderItem[] = rawOrders.map(order => ({
+    ...order,
+    size: order.size as Size, // Ensure size is correctly typed
+    pasta: order.pasta as Pasta, // Ensure pasta is correctly typed
+  }));
   const aggregatedOrders = aggregateOrders(orders);
 
   const [availableTimeSlots, setAvailableTimeSlots] = useState<TimeSlot[]>([]);
@@ -113,9 +111,14 @@ export default function OrderBox({
     try {
       const response = await createOrder(orderData);
 
-      // Assign takeaway time slot in the database
-      if (response && response.order_data) {
-        await assignTimeSlot(selectedSlot, String(response.order_data[0].id));
+      if (response.success && response.order_data.length > 0) {
+        const orderId = response.order_data[0].id; // Get first order ID
+        await assignTimeSlot(selectedSlot, orderId);
+      } else {
+        console.error(
+          "Unexpected orderData format or empty array:",
+          response.order_data
+        );
       }
 
       console.log("Bestelling geplaatst:", response);
