@@ -17,7 +17,7 @@ export default function MenuItemBackOffice({
       <div className="w-full">
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-lg font-semibold">
-            {item.order_number}. {item.name}
+            {item.name}
           </h2>
           <p className="text-sm font-bold min-w-10">€ {item.price}</p>
         </div>
