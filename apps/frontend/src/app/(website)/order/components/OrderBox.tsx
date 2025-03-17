@@ -12,6 +12,7 @@ import { useTimeSlots } from "./useTimeSlots";
 import { handleOrderSubmit } from "../actions/orderActions";
 import { Pasta, Size } from "@/modules/menu/types";
 import InputField from "@/components/functional/input/InputField";
+import Link from "next/link";
 
 interface OrderBoxProps {
   layout?: "sticky" | "fullwidth";
@@ -76,19 +77,26 @@ export default function OrderBox({
         <div className="mt-4">
           <h3 className="mb-2">Kies een afhaaltijd:</h3>
           <div className="flex gap-2 flex-wrap">
-            {availableTimeSlots.map((time) => (
-              <button
-                key={time.id}
-                onClick={() => setSelectedTime(time.id)}
-                className={`p-2 border rounded ${
-                  selectedTime === time.id
-                    ? "bg-primary text-white"
-                    : "bg-primary200 hover:bg-primary"
-                }`}
-              >
-                {time.time_slot.slice(0, 5)}
-              </button>
-            ))}
+            {availableTimeSlots.length > 0 ? (
+              availableTimeSlots.map((time) => (
+                <button
+                  key={time.id}
+                  onClick={() => setSelectedTime(time.id)}
+                  className={`p-2 border rounded ${
+                    selectedTime === time.id
+                      ? "bg-primary text-white"
+                      : "bg-primary200 hover:bg-primary"
+                  }`}
+                >
+                  {time.time_slot.slice(0, 5)}
+                </button>
+              ))
+            ) : (
+              <p>
+                Bestellen is momenteel niet mogelijk. Bekijk <Link href={'/contact'} className="text-primary hover:underline hover:text-primary600">hier</Link>{" "}
+                de openingsuren
+              </p>
+            )}
           </div>
         </div>
       )}
