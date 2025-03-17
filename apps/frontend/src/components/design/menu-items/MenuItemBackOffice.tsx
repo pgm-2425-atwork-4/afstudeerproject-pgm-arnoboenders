@@ -13,7 +13,7 @@ export default function MenuItemBackOffice({
   onDelete,
 }: MenuItemBackOfficeProps) {
   return (
-    <div className="flex justify-between items-center p-4 gap-4 border border-primary200 rounded-lg shadow-md">
+    <div className="flex justify-between items-center p-4 gap-4 bg-primary50 rounded-lg shadow-md">
       <div className="w-full">
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-lg font-semibold">
@@ -25,17 +25,11 @@ export default function MenuItemBackOffice({
           {Array.isArray(item.ingredients) && item.ingredients.join(" - ")}
         </p>
       </div>
-      <button
-        onClick={() => onDelete(item.id)}
-        className="p-2 rounded-lg hover:bg-gray-100"
-      >
-        <Trash className="w-5 h-5 text-blue-500" />
+      <button onClick={() => onEdit(item)} className="p-2 rounded-lg hover:text-primary800">
+        <Pencil className="w-5 h-5 text-primary hover:text-primary800" />
       </button>
-      <button
-        onClick={() => onEdit(item)}
-        className="p-2 rounded-lg hover:bg-gray-100"
-      >
-        <Pencil className="w-5 h-5 text-blue-500" />
+      <button onClick={() => onDelete(item.id)} className="p-2 rounded-lg hover:text-red-800">
+        <Trash className="w-5 h-5 text-red-400 hover:text-red-800" />
       </button>
     </div>
   );
