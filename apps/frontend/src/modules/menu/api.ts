@@ -12,7 +12,7 @@ export const getMenuItems = async (): Promise<MenuItem[] | null> => {
 };
 
 export const getCategories = async (): Promise<MenuCategory[] | null> => {
-  const { data, error } = await supabase.from("menu_category").select("*");
+  const { data, error } = await supabase.from("menu_category").select("*").order("sort_order", { ascending: true });
   if (error) {
     throw error;
   }

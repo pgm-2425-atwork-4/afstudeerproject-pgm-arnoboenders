@@ -2,6 +2,7 @@ import { supabase } from "@/core/networking/api";
 import { useEffect, useState } from "react";
 import { fetchOrders } from "./api";
 import { Order } from "./types";
+import { OrderItem } from "@/modules/order/types";
 
 interface OrderPayload {
   eventType: "INSERT" | "UPDATE" | "DELETE";
@@ -49,4 +50,26 @@ export const useOrders = () => {
   }, []);
 
   return orders;
+};
+
+export const aggregateOrders = (orders: OrderItem[]): OrderItem[] => {
+  return orders.reduce<OrderItem[]>((acc, order) => {
+    const existingOrder = acc.find(
+      (o) =>
+        o.id === order.id &&
+        o.size?.name === order.size?.name &&
+        o.pasta?.pasta === order.pasta?.pasta
+    );
+
+    if (existingOrder) {
+      existingOrder.amount += order.amount;
+    } else {
+      acc.push({
+        ...order,
+        amount: Number(order.amount) || 1,
+        price: order.price,
+      });
+    }
+    return acc;
+  }, []);
 };

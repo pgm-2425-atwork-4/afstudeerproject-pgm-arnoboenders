@@ -4,7 +4,7 @@ import { Vegan } from "lucide-react";
 
 export default function OrderItemCard({ menuItem }: { menuItem: MenuItem }) {
   return (
-    <div className="flex flex-col justify-between bg-white shadow-md w-full p-4 rounded-lg">
+    <div className="flex flex-col justify-between bg-primary50 shadow-md w-full p-4 rounded-lg">
       <div className="flex justify-between items-center gap-4">
         <h3>
           {menuItem.veggie && <Vegan className="text-green-600" />}

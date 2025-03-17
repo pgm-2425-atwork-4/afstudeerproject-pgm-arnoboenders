@@ -1,49 +1,23 @@
+// components/OrderBox.tsx
 "use client";
 
 import { useOrders } from "@/components/context/OrderProvider";
 import Button from "@/components/functional/button/Button";
-import { Pasta, Size } from "@/modules/menu/types";
-import {
-  assignTimeSlot,
-  createOrder,
-  fetchAvailableTimeSlots,
-} from "@/modules/order/api";
 import { OrderItem } from "@/modules/order/types";
-import { TimeSlot } from "@/modules/time-slots/types";
-
+import { aggregateOrders } from "@/modules/order/utils";
 import { Trash2 } from "lucide-react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useTimeSlots } from "./useTimeSlots";
+import { handleOrderSubmit } from "../actions/orderActions";
+import { Pasta, Size } from "@/modules/menu/types";
+import InputField from "@/components/functional/input/InputField";
 
 interface OrderBoxProps {
   layout?: "sticky" | "fullwidth";
   showForm?: boolean;
   buttonText?: string;
-  buttonAction?: () => void;
 }
-
-const aggregateOrders = (orders: OrderItem[]): OrderItem[] => {
-  return orders.reduce<OrderItem[]>((acc, order) => {
-    const existingOrder = acc.find(
-      (o) =>
-        o.id === order.id &&
-        o.size?.name === order.size?.name && // Ensure size is compared correctly
-        o.pasta?.pasta === order.pasta?.pasta // Ensure pasta type is compared correctly
-    );
-
-    if (existingOrder) {
-      existingOrder.amount += order.amount;
-    } else {
-      acc.push({
-        ...order,
-        amount: Number(order.amount) || 1,
-        price: order.price,
-      });
-    }
-    return acc;
-  }, []);
-};
 
 export default function OrderBox({
   layout = "sticky",
@@ -51,82 +25,19 @@ export default function OrderBox({
   buttonText = "Bestel",
 }: OrderBoxProps) {
   const { orders: rawOrders, emptyOrders, removeOrder } = useOrders();
-  const orders: OrderItem[] = rawOrders.map(order => ({
+  const orders: OrderItem[] = rawOrders.map((order) => ({
     ...order,
-    size: order.size as Size, // Ensure size is correctly typed
-    pasta: order.pasta as Pasta, // Ensure pasta is correctly typed
+    size: order.size as Size,
+    pasta: order.pasta as Pasta,
   }));
   const aggregatedOrders = aggregateOrders(orders);
 
-  const [availableTimeSlots, setAvailableTimeSlots] = useState<TimeSlot[]>([]);
+  const totalOrders = orders.reduce((acc, order) => acc + order.amount, 0);
+  const { availableTimeSlots } = useTimeSlots(totalOrders);
+  const [error, setError] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<number | null>(null);
   const [customerName, setCustomerName] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const totalOrders = orders.reduce((acc, order) => acc + order.amount, 0);
-
-  // Fetch available takeaway slots
-  useEffect(() => {
-    const loadTimeSlots = async () => {
-      const slots = await fetchAvailableTimeSlots();
-      if (totalOrders > 8 && slots[0]?.current_orders >= 3) {
-        slots.shift(); // Remove the first item if totalOrders is above 8
-      }
-      setAvailableTimeSlots(slots);
-    };
-
-    loadTimeSlots();
-  }, [totalOrders]);
-  console.log("availableTimeSlots", availableTimeSlots);
-
-  // Submit Order
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    if (!customerName || !phoneNumber || !selectedTime) {
-      alert("Vul alle velden in voordat je bestelt!");
-      return;
-    }
-
-    const selectedSlot = availableTimeSlots.find(
-      (slot) => slot.id === selectedTime
-    );
-    if (!selectedSlot) {
-      alert("Ongeldige afhaaltijd geselecteerd!");
-      return;
-    }
-
-    const orderData = {
-      price: aggregatedOrders.reduce((acc, order) => acc + order.price, 0), // Total price
-      order_data: aggregatedOrders.map(({ id, amount, name, price }) => ({
-        id,
-        amount,
-        name,
-        price,
-      })), // Order details
-      name: customerName,
-      phone_number: phoneNumber,
-      take_away_time: selectedSlot.id, // Pass the full object instead
-    };
-
-    try {
-      const response = await createOrder(orderData);
-
-      if (response.success && response.order_data.length > 0) {
-        const orderId = response.order_data[0].id; // Get first order ID
-        await assignTimeSlot(selectedSlot, orderId);
-      } else {
-        console.error(
-          "Unexpected orderData format or empty array:",
-          response.order_data
-        );
-      }
-
-      console.log("Bestelling geplaatst:", response);
-      emptyOrders();
-    } catch (error) {
-      console.error("Fout bij het plaatsen van de bestelling:", error);
-    }
-  };
 
   return (
     <div
@@ -164,57 +75,62 @@ export default function OrderBox({
       {layout === "fullwidth" && (
         <div className="mt-4">
           <h3 className="mb-2">Kies een afhaaltijd:</h3>
-          {availableTimeSlots.length === 0 ? (
-            <p>
-              We zijn momenteel gesloten bekijk de openingsuren op
-              <Link href={"/contact"} className="text-primary hover:underline">
-                {" "}
-                deze pagina{" "}
-              </Link>
-            </p>
-          ) : (
-            <div className="flex gap-2 flex-wrap">
-              {availableTimeSlots.map((time) => (
-                <button
-                  key={time.id}
-                  onClick={() => setSelectedTime(time.id)}
-                  className={`p-2 border rounded ${
-                    selectedTime === time.id
-                      ? "bg-primary text-white"
-                      : "bg-primary200 hover:bg-primary"
-                  }`}
-                >
-                  {time.time_slot}
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="flex gap-2 flex-wrap">
+            {availableTimeSlots.map((time) => (
+              <button
+                key={time.id}
+                onClick={() => setSelectedTime(time.id)}
+                className={`p-2 border rounded ${
+                  selectedTime === time.id
+                    ? "bg-primary text-white"
+                    : "bg-primary200 hover:bg-primary"
+                }`}
+              >
+                {time.time_slot.slice(0, 5)}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
       {showForm ? (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <h3>Vul jouw gegevens in</h3>
-          <label>
-            Naam:
-            <input
-              type="text"
-              className="border p-2 rounded w-full"
-              required
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-            />
-          </label>
-          <label>
-            Telefoonnummer:
-            <input
-              type="text"
-              className="border p-2 rounded w-full"
-              required
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-            />
-          </label>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setError(null); // Clear previous errors
+            handleOrderSubmit({
+              event: e,
+              aggregatedOrders,
+              selectedTime,
+              availableTimeSlots,
+              customerName,
+              phoneNumber,
+              emptyOrders,
+              setError,
+            });
+          }}
+          className="flex flex-col gap-4"
+        >
+          {/* Show error messages */}
+          <InputField
+            label="Naam"
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            type="text"
+            name="customerName"
+            id="customerName"
+            placeholder="Voer uw naam in"
+          />
+          <InputField
+            label="Telefoonnummer"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            type="tel"
+            name="phoneNumber"
+            id="phoneNumber"
+            placeholder="Voer uw telefoonnummer in"
+          />
+          {error && <p className="text-red-500">{error}</p>}
           <Button text={buttonText} type="submit" />
         </form>
       ) : (

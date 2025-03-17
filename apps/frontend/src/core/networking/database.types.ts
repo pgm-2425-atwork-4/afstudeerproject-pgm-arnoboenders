@@ -36,7 +36,7 @@ export type Database = {
     Tables: {
       menu: {
         Row: {
-          category_id: number | null
+          category_id: string | null
           created_at: string
           id: string
           ingredients: Json | null
@@ -52,7 +52,7 @@ export type Database = {
           veggie: boolean
         }
         Insert: {
-          category_id?: number | null
+          category_id?: string | null
           created_at?: string
           id?: string
           ingredients?: Json | null
@@ -68,7 +68,7 @@ export type Database = {
           veggie?: boolean
         }
         Update: {
-          category_id?: number | null
+          category_id?: string | null
           created_at?: string
           id?: string
           ingredients?: Json | null
@@ -96,20 +96,23 @@ export type Database = {
       menu_category: {
         Row: {
           created_at: string
-          id: number
+          id: string
           name: string
+          sort_order: number | null
           updated_at: string
         }
         Insert: {
           created_at?: string
-          id?: number
+          id?: string
           name: string
+          sort_order?: number | null
           updated_at?: string
         }
         Update: {
           created_at?: string
-          id?: number
+          id?: string
           name?: string
+          sort_order?: number | null
           updated_at?: string
         }
         Relationships: []
