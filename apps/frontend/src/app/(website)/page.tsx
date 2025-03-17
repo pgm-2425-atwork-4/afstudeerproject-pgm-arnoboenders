@@ -1,5 +1,4 @@
 import Image from "next/image";
-import styles from "@/app/styles/hero.module.css";
 import Button from "@/components/functional/button/Button";
 import Link from "next/link";
 import { BookText, Utensils } from "lucide-react";
@@ -8,22 +7,37 @@ import { getMenuItems } from "@/modules/menu/api";
 
 export default async function Home() {
   const menuItems = await getMenuItems();
+
   return (
     <div>
-      <div className={styles.heroContainer}>
-        <Image src="/assets/hero.jpg" alt="Hero Image" fill priority />
-        <div
-          className={`${styles.heroContent} mt-32 sm:mt-24 sm:ml-20 lg:ml-28 2xl:ml-96 shadow-xl`}
-        >
-          <h1 className={`text-primary`}>“Daarmee pasta...”</h1>
-          <p className={`${styles.heroSubtitle} text-primary`}>
-            Eenvoudig, vers en boordevol smaak.
-          </p>
-          <Link href={"/menu"}>
-            <Button text="Bekijk het menu" icon={<BookText />} />
-          </Link>
+      {/* Hero Section */}
+      <div className="relative w-full min-h-[70vh] sm:min-h-[50vh] flex items-center overflow-hidden">
+        {/* Background Image */}
+        <Image
+          src="/assets/hero.jpg"
+          alt="Hero Image"
+          fill
+          priority
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+
+        {/* Text Content */}
+        <div className="container w-full">
+          <div className="z-10 bg-black/60 backdrop-blur-md p-6 sm:p-8 rounded-lg max-w-md shadow-lg">
+            <h1 className="text-2xl sm:text-3xl font-bold">
+              “Daarmee pasta...”
+            </h1>
+            <p className="text-lg sm:text-xl my-4">
+              Eenvoudig, vers en boordevol smaak.
+            </p>
+            <Link href="/menu">
+              <Button text="Bekijk het menu" icon={<BookText />} />
+            </Link>
+          </div>
         </div>
       </div>
+
+      {/* Content Below Hero */}
       <div className="container mx-auto my-10">
         <h2>Nieuw deze maand</h2>
 
@@ -33,11 +47,14 @@ export default async function Home() {
               .filter((item) => item.is_new)
               .map((item) => <ItemCard key={item.id} item={item} />)}
         </div>
+
         <div className="flex justify-center my-10">
           <Link href="/order">
             <Button text="Bestel nu" icon={<Utensils />} />
           </Link>
         </div>
+
+        {/* Additional Content */}
         <div className="grid lg:grid-cols-2 items-center justify-center justify-items-center my-20 gap-8">
           <Image
             src="/assets/homeImg1.png"
