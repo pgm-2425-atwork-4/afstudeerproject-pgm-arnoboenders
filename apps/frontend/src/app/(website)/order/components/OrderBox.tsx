@@ -1,99 +1,43 @@
+// components/OrderBox.tsx
 "use client";
 
 import { useOrders } from "@/components/context/OrderProvider";
 import Button from "@/components/functional/button/Button";
-import { createOrder } from "@/modules/order/api";
+import { OrderItem } from "@/modules/order/types";
+import { aggregateOrders } from "@/modules/order/utils";
 import { Trash2 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useState } from "react";
-
-interface Order {
-  id: string;
-  amount: number;
-  price: number;
-  name: string;
-  size?: string;
-  pastaType?: string;
-}
+import { useTimeSlots } from "./useTimeSlots";
+import { handleOrderSubmit } from "../actions/orderActions";
+import { Pasta, Size } from "@/modules/menu/types";
+import InputField from "@/components/functional/input/InputField";
 
 interface OrderBoxProps {
   layout?: "sticky" | "fullwidth";
   showForm?: boolean;
   buttonText?: string;
-  buttonAction?: () => void;
 }
-
-const aggregateOrders = (orders: Order[]): Order[] => {
-  return orders.reduce<Order[]>((acc, order) => {
-    const existingOrder = acc.find(
-      (o) =>
-        o.id === order.id &&
-        o.size === order.size &&
-        o.pastaType === order.pastaType
-    );
-
-    if (existingOrder) {
-      existingOrder.amount += order.amount; // Increase amount
-    } else {
-      acc.push({
-        ...order,
-        amount: Number(order.amount) || 1,
-        price: order.price,
-      });
-    }
-    return acc;
-  }, []);
-};
 
 export default function OrderBox({
   layout = "sticky",
   showForm = false,
   buttonText = "Bestel",
 }: OrderBoxProps) {
-  const { orders, emptyOrders, removeOrder } = useOrders();
+  const { orders: rawOrders, emptyOrders, removeOrder } = useOrders();
+  const orders: OrderItem[] = rawOrders.map((order) => ({
+    ...order,
+    size: order.size as Size,
+    pasta: order.pasta as Pasta,
+  }));
   const aggregatedOrders = aggregateOrders(orders);
 
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const totalOrders = orders.reduce((acc, order) => acc + order.amount, 0);
+  const { availableTimeSlots } = useTimeSlots(totalOrders);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<number | null>(null);
   const [customerName, setCustomerName] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-
-  // Example Time Slots
-  const timeSlots = ["12:00", "12:30", "13:00", "13:30", "14:00"];
-
-  // Submit Order
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    if (!customerName || !phoneNumber || !selectedTime) {
-      alert("Vul alle velden in voordat je bestelt!");
-      return;
-    }
-
-    const orderData = {
-      price: aggregatedOrders.reduce((acc, order) => acc + order.price, 0), // Total price
-      order_data: aggregatedOrders.map(({ id, amount, name, price }) => ({
-        id,
-        amount,
-        name,
-        price,
-      })), // Order details
-      name: customerName,
-      phone_number: phoneNumber,
-      take_away_time: selectedTime,
-    };
-
-    try {
-      console.log("orderData", orderData);
-      const response = await createOrder(orderData);
-      console.log("response", response);
-
-      console.log("Bestelling geplaatst:", response);
-      // redirect(paymentUrl);
-      emptyOrders();
-    } catch (error) {
-      console.error("Fout bij het plaatsen van de bestelling:", error);
-    }
-  };
 
   return (
     <div
@@ -132,17 +76,17 @@ export default function OrderBox({
         <div className="mt-4">
           <h3 className="mb-2">Kies een afhaaltijd:</h3>
           <div className="flex gap-2 flex-wrap">
-            {timeSlots.map((time) => (
+            {availableTimeSlots.map((time) => (
               <button
-                key={time}
-                onClick={() => setSelectedTime(time)}
+                key={time.id}
+                onClick={() => setSelectedTime(time.id)}
                 className={`p-2 border rounded ${
-                  selectedTime === time
+                  selectedTime === time.id
                     ? "bg-primary text-white"
                     : "bg-primary200 hover:bg-primary"
                 }`}
               >
-                {time}
+                {time.time_slot.slice(0, 5)}
               </button>
             ))}
           </div>
@@ -150,36 +94,44 @@ export default function OrderBox({
       )}
 
       {showForm ? (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <h3>Vul jouw gegevens in</h3>
-          <label>
-            Naam:
-            <input
-              type="text"
-              className="border p-2 rounded w-full"
-              required
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-            />
-          </label>
-          <label>
-            Telefoonnummer:
-            <input
-              type="text"
-              className="border p-2 rounded w-full"
-              required
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-            />
-          </label>
-          {selectedTime && (
-            <p className="text-green-600">Afhaal tijd: {selectedTime}</p>
-          )}
-          <Button
-            text={buttonText}
-            type="submit"
-            onClick={() => handleSubmit}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setError(null); // Clear previous errors
+            handleOrderSubmit({
+              event: e,
+              aggregatedOrders,
+              selectedTime,
+              availableTimeSlots,
+              customerName,
+              phoneNumber,
+              emptyOrders,
+              setError,
+            });
+          }}
+          className="flex flex-col gap-4"
+        >
+          {/* Show error messages */}
+          <InputField
+            label="Naam"
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            type="text"
+            name="customerName"
+            id="customerName"
+            placeholder="Voer uw naam in"
           />
+          <InputField
+            label="Telefoonnummer"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            type="tel"
+            name="phoneNumber"
+            id="phoneNumber"
+            placeholder="Voer uw telefoonnummer in"
+          />
+          {error && <p className="text-red-500">{error}</p>}
+          <Button text={buttonText} type="submit" />
         </form>
       ) : (
         <Button text={buttonText} onClick={() => redirect("order/overview")} />

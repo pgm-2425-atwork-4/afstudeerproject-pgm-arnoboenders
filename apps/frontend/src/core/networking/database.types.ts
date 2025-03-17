@@ -36,40 +36,49 @@ export type Database = {
     Tables: {
       menu: {
         Row: {
-          category_id: number | null
+          category_id: string | null
           created_at: string
           id: string
           ingredients: Json | null
           is_new: boolean
           name: string
           order_number: number
+          pasta: Json | null
           price: number
+          show_on_menu: boolean
+          size: Json | null
           updated_at: string
           user_id: string | null
           veggie: boolean
         }
         Insert: {
-          category_id?: number | null
+          category_id?: string | null
           created_at?: string
           id?: string
           ingredients?: Json | null
           is_new?: boolean
           name: string
           order_number?: number
+          pasta?: Json | null
           price: number
+          show_on_menu?: boolean
+          size?: Json | null
           updated_at?: string
           user_id?: string | null
           veggie?: boolean
         }
         Update: {
-          category_id?: number | null
+          category_id?: string | null
           created_at?: string
           id?: string
           ingredients?: Json | null
           is_new?: boolean
           name?: string
           order_number?: number
+          pasta?: Json | null
           price?: number
+          show_on_menu?: boolean
+          size?: Json | null
           updated_at?: string
           user_id?: string | null
           veggie?: boolean
@@ -87,20 +96,23 @@ export type Database = {
       menu_category: {
         Row: {
           created_at: string
-          id: number
+          id: string
           name: string
+          sort_order: number | null
           updated_at: string
         }
         Insert: {
           created_at?: string
-          id?: number
+          id?: string
           name: string
+          sort_order?: number | null
           updated_at?: string
         }
         Update: {
           created_at?: string
-          id?: number
+          id?: string
           name?: string
+          sort_order?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -137,7 +149,7 @@ export type Database = {
           order_data: Json
           phone_number: string
           price: number
-          take_away_time: string
+          take_away_time: number | null
           updated_at: string
         }
         Insert: {
@@ -147,7 +159,7 @@ export type Database = {
           order_data: Json
           phone_number: string
           price: number
-          take_away_time: string
+          take_away_time?: number | null
           updated_at?: string
         }
         Update: {
@@ -157,8 +169,43 @@ export type Database = {
           order_data?: Json
           phone_number?: string
           price?: number
-          take_away_time?: string
+          take_away_time?: number | null
           updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_take_away_time_fkey"
+            columns: ["take_away_time"]
+            isOneToOne: false
+            referencedRelation: "takeaway_time_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      takeaway_time_slots: {
+        Row: {
+          current_orders: number
+          day_of_week: string
+          id: number
+          is_takeaway_available: boolean | null
+          max_orders: number
+          time_slot: string
+        }
+        Insert: {
+          current_orders?: number
+          day_of_week: string
+          id?: number
+          is_takeaway_available?: boolean | null
+          max_orders?: number
+          time_slot: string
+        }
+        Update: {
+          current_orders?: number
+          day_of_week?: string
+          id?: number
+          is_takeaway_available?: boolean | null
+          max_orders?: number
+          time_slot?: string
         }
         Relationships: []
       }
