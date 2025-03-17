@@ -85,7 +85,7 @@ export default function Navigation() {
 }
 
 const NavLinks = () => (
-  <div className="flex gap-4 sm:gap-6">
+  <div className="flex gap-4 sm:gap-6 nav-links">
     <Link className="hover:text-primary500" href="/menu">
       Menu
     </Link>
