@@ -1,7 +1,7 @@
-// actions/orderActions.ts
 import { assignTimeSlot, createOrder } from "@/modules/order/api";
 import { OrderItem } from "@/modules/order/types";
 import { TimeSlot } from "@/modules/time-slots/types";
+import { z } from "zod";
 
 interface SubmitOrderProps {
   aggregatedOrders: OrderItem[];
@@ -10,7 +10,20 @@ interface SubmitOrderProps {
   customerName: string;
   phoneNumber: string;
   emptyOrders: () => void;
+  setError: (error: string) => void; // Add this function to set errors
 }
+
+const orderSchema = z.object({
+  customerName: z.string().min(1, "Vul uw naam in."),
+  phoneNumber: z
+    .string()
+    .min(1, "Vul uw telefoonnummer in")
+    .regex(/^\d+$/, "Telefoonnummer moet uit cijfers bestaan"),
+  selectedTime: z
+    .number()
+    .nullable()
+    .refine((val) => val !== null, "Selecteer een afhaaltijd."),
+});
 
 export const handleOrderSubmit = async ({
   aggregatedOrders,
@@ -19,12 +32,21 @@ export const handleOrderSubmit = async ({
   customerName,
   phoneNumber,
   emptyOrders,
-  event, // Add event here
+  setError,
+  event,
 }: SubmitOrderProps & { event: React.FormEvent }) => {
-  event.preventDefault(); // Ensure we prevent default browser form submission
+  event.preventDefault(); // Prevent default form submission
 
-  if (!customerName || !phoneNumber || !selectedTime) {
-    alert("Vul alle velden in voordat je bestelt!");
+  // Validate input using Zod
+  const validationResult = orderSchema.safeParse({
+    customerName,
+    phoneNumber,
+    selectedTime,
+  });
+
+  if (!validationResult.success) {
+    const errorMessage = validationResult.error.errors[0]?.message;
+    setError(errorMessage);
     return;
   }
 
@@ -33,7 +55,7 @@ export const handleOrderSubmit = async ({
   );
 
   if (!selectedSlot) {
-    alert("Ongeldige afhaaltijd geselecteerd!");
+    setError("Ongeldige afhaaltijd geselecteerd!");
     return;
   }
 
@@ -59,8 +81,10 @@ export const handleOrderSubmit = async ({
       emptyOrders();
     } else {
       console.error("Unexpected orderData format:", response.order_data);
+      setError("Er is een fout opgetreden bij het plaatsen van de bestelling.");
     }
   } catch (error) {
     console.error("Fout bij het plaatsen van de bestelling:", error);
+    setError("Kon bestelling niet plaatsen. Probeer het later opnieuw.");
   }
 };

@@ -34,7 +34,7 @@ export default function OrderBox({
 
   const totalOrders = orders.reduce((acc, order) => acc + order.amount, 0);
   const { availableTimeSlots } = useTimeSlots(totalOrders);
-
+  const [error, setError] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<number | null>(null);
   const [customerName, setCustomerName] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
@@ -86,7 +86,7 @@ export default function OrderBox({
                     : "bg-primary200 hover:bg-primary"
                 }`}
               >
-                {time.time_slot}
+                {time.time_slot.slice(0, 5)}
               </button>
             ))}
           </div>
@@ -97,6 +97,7 @@ export default function OrderBox({
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            setError(null); // Clear previous errors
             handleOrderSubmit({
               event: e,
               aggregatedOrders,
@@ -105,10 +106,12 @@ export default function OrderBox({
               customerName,
               phoneNumber,
               emptyOrders,
+              setError,
             });
           }}
           className="flex flex-col gap-4"
         >
+          {/* Show error messages */}
           <InputField
             label="Naam"
             value={customerName}
@@ -127,6 +130,7 @@ export default function OrderBox({
             id="phoneNumber"
             placeholder="Voer uw telefoonnummer in"
           />
+          {error && <p className="text-red-500">{error}</p>}
           <Button text={buttonText} type="submit" />
         </form>
       ) : (
