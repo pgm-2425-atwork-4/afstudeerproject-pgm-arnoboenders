@@ -23,8 +23,8 @@ export default async function Home() {
 
         {/* Text Content */}
         <div className="container w-full">
-          <div className="z-10 bg-black/60 backdrop-blur-md p-6 sm:p-8 rounded-lg max-w-md shadow-lg">
-            <h1 className="text-2xl sm:text-3xl font-bold">
+          <div className="z-10 bg-black/30 backdrop-blur-md p-6 sm:p-8 rounded-lg max-w-md shadow-lg text-primary">
+            <h1 className="text-2xl sm:text-3xl font-bold ">
               “Daarmee pasta...”
             </h1>
             <p className="text-lg sm:text-xl my-4">
