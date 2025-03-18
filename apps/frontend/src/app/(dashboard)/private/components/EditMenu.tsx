@@ -24,43 +24,63 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
   const [categories, setCategories] = useState<MenuCategory[] | null>([]);
   const [uploadedImageFile, setUploadedImageFile] = useState<File | undefined>(
     undefined
-  ); // New state for image file
+  );
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  // Fetch menu items & categories on mount
   useEffect(() => {
-    getMenuItems().then((data) => {
-      setMenuItems(data || []);
-    });
-    getCategories().then((data) => {
-      setCategories(data);
-    });
+    async function fetchData() {
+      const menuData = await getMenuItems();
+      const categoryData = await getCategories();
+      setMenuItems(menuData || []);
+      setCategories(categoryData || []);
+    }
+    fetchData();
   }, []);
+
+  // Show success message
+  const showSuccessMessage = (message: string) => {
+    setSuccessMessage(message);
+    setTimeout(() => setSuccessMessage(null), 3000); // Hide message after 3 seconds
+  };
 
   const handleEditClick = (item: MenuItem) => {
     setSelectedItem(item);
     setIsEditing(true);
   };
+  const updateEditedItemInList = (updatedItem: MenuItem) => {
+    setMenuItems((prevItems) =>
+      prevItems.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+    );
+    showSuccessMessage("Gerecht succesvol bijgewerkt!");
+  };
+
   const handleCreateClick = (item: CreateMenuItem) => {
     setNewItem(item);
     setIsCreating(true);
+  };
+
+  // Function to update the menu list after creating an item
+  const addNewItemToList = (createdItem: MenuItem) => {
+    setMenuItems((prevItems) => [...prevItems, createdItem]);
+    showSuccessMessage("Gerecht succesvol aangemaakt!");
   };
 
   const handleDelete = async (id: string) => {
     try {
       await deleteMenuItem(id);
       setMenuItems((prevItems) => prevItems.filter((item) => item.id !== id));
+      showSuccessMessage("Gerecht succesvol verwijderd!");
     } catch (error) {
       console.error("Error deleting menu item:", error);
     }
   };
 
   const handleEdit = async () => {
-    if (!selectedItem) {
-      console.log("No item selected");
-      return;
-    }
+    if (!selectedItem) return;
+
     try {
-      // No need to pass `uploadedImageFile` again, as it was already handled in `EditModal.tsx`
-      const updatedItem = await updateMenuItem(selectedItem);
+      const updatedItem = await updateMenuItem(selectedItem, uploadedImageFile);
 
       setMenuItems((prevItems) =>
         prevItems.map((item) =>
@@ -68,45 +88,40 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
         )
       );
 
-      // Update selectedItem with new image name
-      setSelectedItem(updatedItem);
+      setSelectedItem(updatedItem); // Update selected item
+      setUploadedImageFile(undefined); // Clear file selection
+      setIsEditing(false); // Close modal
+      showSuccessMessage("Gerecht succesvol bijgewerkt!");
     } catch (error) {
-      console.error(error);
+      console.error("Error updating menu item:", error);
     }
-    setIsEditing(false);
   };
-  
+
   const handleCreate = async () => {
-    if (!newItem) {
-      console.log("No item selected");
-      return;
-    }
+    if (!newItem) return;
+
     try {
-      const createdItem = await createMenuItem({
-        user_id: owner_id,
-        name: newItem.name,
-        ingredients: newItem.ingredients,
-        price: newItem.price,
-        is_new: newItem.is_new,
-        veggie: newItem.veggie,
-        category_id: newItem.category_id,
-        order_number: menuItems.length + 1,
-        image: newItem.image,
-        pasta: newItem.pasta,
-        show_on_menu: newItem.show_on_menu,
-        size: newItem.size,
-      });
+      const createdItem = await createMenuItem(newItem, uploadedImageFile);
+
       if (createdItem) {
-        setMenuItems((prevItems) => [...prevItems, createdItem]);
+        setMenuItems((prevItems) => [...prevItems, createdItem]); // Add new item
+        setNewItem(null);
+        setUploadedImageFile(undefined);
+        setIsCreating(false);
+        showSuccessMessage("Gerecht succesvol aangemaakt!"); // Show message
       }
     } catch (error) {
       console.error("Error creating menu item:", error);
     }
-    setIsCreating(false);
   };
 
   return (
-    <div className="flex flex-col  justify-center items-center gap-8">
+    <div className="flex flex-col justify-center items-center gap-8">
+      {successMessage && (
+        <div className="bg-green-500 text-white p-2 rounded-xl shadow-lg text-center w-80 fixed top-4 z-50">
+          {successMessage}
+        </div>
+      )}
       <div className="w-full flex flex-col items-center gap-8">
         <div className="w-full">
           <h2>Menu-afbeelding uploaden</h2>
@@ -165,21 +180,23 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
         categories={categories}
         setIsCreating={setIsCreating}
         setNewItem={setNewItem}
-        handleCreate={handleCreate}
         newItem={newItem}
+        uploadedImageFile={uploadedImageFile}
+        setUploadedImageFile={setUploadedImageFile}
+        updateMenuList={addNewItemToList}
+        handleCreate={handleCreate}
       />
-      <div>
-        <EditModal
-          isEditing={isEditing}
-          setIsEditing={setIsEditing}
-          handleSave={handleEdit}
-          selectedItem={selectedItem}
-          categories={categories}
-          setSelectedItem={setSelectedItem}
-          uploadedImageFile={uploadedImageFile} // Pass file to modal
-          setUploadedImageFile={setUploadedImageFile} // Allow modal to update this state
-        />
-      </div>
+      <EditModal
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+        selectedItem={selectedItem}
+        categories={categories}
+        setSelectedItem={setSelectedItem}
+        uploadedImageFile={uploadedImageFile}
+        setUploadedImageFile={setUploadedImageFile}
+        handleSave={handleEdit}
+        updateMenuList={updateEditedItemInList}
+      />
     </div>
   );
 }

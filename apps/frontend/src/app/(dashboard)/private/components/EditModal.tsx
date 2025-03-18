@@ -6,6 +6,7 @@ import InputField from "@/components/functional/input/InputField";
 import { MenuCategory, MenuItem } from "@/modules/menu/types";
 import { updateMenuItem } from "@/modules/menu/api";
 import { ImageUp } from "lucide-react";
+import { menuItemSchema } from "@/components/functional/schema/menuItemSchema";
 
 interface ModalProps {
   isEditing: boolean;
@@ -16,6 +17,7 @@ interface ModalProps {
   handleSave: () => void;
   uploadedImageFile: File | undefined; // New prop
   setUploadedImageFile: (file: File | undefined) => void; // New prop
+  updateMenuList: (updatedItem: MenuItem) => void;
 }
 
 export default function EditModal({
@@ -26,10 +28,12 @@ export default function EditModal({
   setIsEditing,
   uploadedImageFile,
   setUploadedImageFile, // Receive setter function
+  updateMenuList,
 }: ModalProps) {
   const [uploadedImageName, setUploadedImageName] = useState<string | null>(
     null
   ); // Store uploaded image filename
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -42,6 +46,27 @@ export default function EditModal({
 
   const handleSaveWithImage = async () => {
     if (selectedItem) {
+      const sanitizedItem = {
+        ...selectedItem,
+        price: selectedItem.price ? Number(selectedItem.price) : 0, // Ensure number
+        order_number: selectedItem.order_number
+          ? Number(selectedItem.order_number)
+          : undefined, // Optional
+        category_id: selectedItem.category_id?.toString() || "", // Ensure it's a string
+      };
+
+      // Validate using Zod
+      const validationResult = menuItemSchema.safeParse(sanitizedItem);
+
+      if (!validationResult.success) {
+        console.error("Validation Errors:", validationResult.error.format()); // Debug log
+        const errorMessages: Record<string, string> = {};
+        validationResult.error.errors.forEach((err) => {
+          errorMessages[err.path[0]] = err.message;
+        });
+        setErrors(errorMessages);
+        return;
+      }
       try {
         // Pass file if a new one is selected
         const updatedItem = await updateMenuItem(
@@ -49,13 +74,14 @@ export default function EditModal({
           uploadedImageFile
         );
 
+        updateMenuList(updatedItem);
         setSelectedItem(updatedItem);
-        setUploadedImageFile(undefined); // Reset file after saving
+        setUploadedImageFile(undefined);
+        setIsEditing(false);
       } catch (error) {
         console.error("Error updating menu item:", error);
       }
     }
-    setIsEditing(false);
   };
 
   return (
@@ -93,6 +119,7 @@ export default function EditModal({
               id="name"
               name="name"
             />
+            {errors.name && <p className="text-red-500">{errors.name}</p>}
             <InputField
               label="Ingredienten"
               type="textarea"
@@ -129,6 +156,7 @@ export default function EditModal({
               id="price"
               name="price"
             />
+            {errors.price && <p className="text-red-500">{errors.price}</p>}
             <InputField
               label="Categorie"
               type="select"
@@ -149,6 +177,9 @@ export default function EditModal({
                 </option>
               ))}
             </InputField>
+            {errors.category_id && (
+              <p className="text-red-500">{errors.category_id}</p>
+            )}
             <InputField
               label="Is het nieuw?"
               type="checkbox"

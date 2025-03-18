@@ -27,11 +27,9 @@ export const updateMenuItem = async (item: Partial<MenuItem>, file?: File) => {
     throw new Error("Item ID is required for updating");
   }
 
-  let fileName: string = item.image ?? `${Date.now()}-menu-item-image.jpg`; // Ensure fileName is a string
-
   if (file) {
+    const fileName: string = item.image ?? `${Date.now()}-menu-item-image.jpg`; // Ensure fileName is a string
     // If a new file is provided, upload it first and update with the new filename
-    fileName = `${Date.now()}-menu-item-image.jpg`; // Generate new filename
     const reader = new FileReader();
 
     return new Promise<Partial<MenuItem>>((resolve, reject) => {
@@ -39,7 +37,7 @@ export const updateMenuItem = async (item: Partial<MenuItem>, file?: File) => {
         if (typeof reader.result === "string") {
           try {
             console.log("Uploading new image:", fileName);
-            await uploadImage(Bucket.MENU_ITEM, reader.result, fileName);
+            await uploadImage(Bucket.MENU_ITEM, reader.result, fileName ?? `${Date.now()}-menu-item-image.jpg`);
             console.log("Image uploaded successfully:", fileName);
 
             // Now update menu with the new image filename
@@ -102,25 +100,80 @@ export const updateMenuItem = async (item: Partial<MenuItem>, file?: File) => {
   }
 };
 
-export const createMenuItem = async (item: CreateMenuItem) => {
-  const { data, error } = await supabase
-    .from("menu")
-    .insert([
-      {
-        name: item.name,
-        ingredients: item.ingredients,
-        price: item.price,
-        is_new: item.is_new,
-        veggie: item.veggie,
-        category_id: item.category_id,
-        user_id: item.user_id,
-      },
-    ])
-    .select();
-  if (error) {
-    throw new Error(error.message);
+export const createMenuItem = async (item: CreateMenuItem, file?: File) => {
+  let fileName: string | null = item.image ?? null;
+
+  if (file) {
+    fileName = `${Date.now()}-menu-item-image.jpg`; // Generate unique filename
+    const reader = new FileReader();
+
+    return new Promise<CreateMenuItem>((resolve, reject) => {
+      reader.onloadend = async () => {
+        if (typeof reader.result === "string") {
+          try {
+            console.log("Uploading new image:", fileName);
+            await uploadImage(Bucket.MENU_ITEM, reader.result, fileName ?? `${Date.now()}-menu-item-image.jpg`);
+            console.log("Image uploaded successfully:", fileName);
+          } catch (error) {
+            console.error("Image upload failed:", error);
+            return reject(error);
+          }
+
+          // Insert menu item **WITHOUT `order_number`**
+          try {
+            const itemData: Omit<CreateMenuItem, "order_number"> = {
+              ...item,
+              image: fileName, // Ensure updated image filename
+            };
+
+            const { data, error } = await supabase
+              .from("menu")
+              .insert([itemData])
+              .select();
+
+            if (error) {
+              console.error("Supabase Insert Error:", error);
+              return reject(error);
+            }
+
+            if (!data || data.length === 0) {
+              return reject("Insert failed: No data returned");
+            }
+
+            console.log("Menu item created successfully:", data[0]);
+            resolve(data[0]); // Return created menu item
+          } catch (error) {
+            return reject(error);
+          }
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+  } else {
+    // If no file is provided, insert the menu item **WITHOUT `order_number`**
+    const { data, error } = await supabase
+      .from("menu")
+      .insert([
+        {
+          name: item.name,
+          ingredients: item.ingredients,
+          price: item.price,
+          is_new: item.is_new,
+          veggie: item.veggie,
+          category_id: item.category_id,
+          user_id: item.user_id,
+          image: fileName, // Could be null if no image is uploaded
+        },
+      ])
+      .select();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data[0]; // Return created menu item
   }
-  return data[0];
 };
 
 export const deleteMenuItem = async (item_id: string) => {
