@@ -1,4 +1,6 @@
 import { MenuItem } from "@/modules/menu/types";
+import { getMenuItemImageUrl } from "@/modules/storage/utils";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function ItemCard({ item }: { item: MenuItem }) {
@@ -8,6 +10,14 @@ export default function ItemCard({ item }: { item: MenuItem }) {
       className="flex flex-col items-center justify-center gap-4 bg-white rounded-xl shadow-xl p-4 hover:shadow-2xl hover:cursor-pointer transition-all duration-300 min-w-60"
     >
       <div className="text-left w-full">
+        {item.image && (
+          <Image
+            src={getMenuItemImageUrl(item.image)}
+            alt={item.name}
+            width={200}
+            height={200}
+          />
+        )}
         <h3>{item.name}</h3>
         <p className="italic text-sm">
           {Array.isArray(item.ingredients) && item.ingredients.join(" - ")}
