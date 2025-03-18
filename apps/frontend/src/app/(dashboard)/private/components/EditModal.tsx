@@ -1,6 +1,11 @@
+"use client";
+"use client";
+import { useState } from "react";
 import Button from "@/components/functional/button/Button";
 import InputField from "@/components/functional/input/InputField";
 import { MenuCategory, MenuItem } from "@/modules/menu/types";
+import { updateMenuItem } from "@/modules/menu/api";
+import { ImageUp } from "lucide-react";
 
 interface ModalProps {
   isEditing: boolean;
@@ -9,6 +14,8 @@ interface ModalProps {
   setSelectedItem: (item: MenuItem) => void;
   setIsEditing: (isEditing: boolean) => void;
   handleSave: () => void;
+  uploadedImageFile: File | undefined; // New prop
+  setUploadedImageFile: (file: File | undefined) => void; // New prop
 }
 
 export default function EditModal({
@@ -17,17 +24,64 @@ export default function EditModal({
   categories,
   setSelectedItem,
   setIsEditing,
-  handleSave,
+  uploadedImageFile,
+  setUploadedImageFile, // Receive setter function
 }: ModalProps) {
+  const [uploadedImageName, setUploadedImageName] = useState<string | null>(
+    null
+  ); // Store uploaded image filename
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      setUploadedImageFile(file); // Store file for later upload
+      setUploadedImageName(file.name); // Temporarily store filename
+    }
+  };
+
+  const handleSaveWithImage = async () => {
+    if (selectedItem) {
+      try {
+        // Pass file if a new one is selected
+        const updatedItem = await updateMenuItem(
+          selectedItem,
+          uploadedImageFile
+        );
+
+        setSelectedItem(updatedItem);
+        setUploadedImageFile(undefined); // Reset file after saving
+      } catch (error) {
+        console.error("Error updating menu item:", error);
+      }
+    }
+    setIsEditing(false);
+  };
+
   return (
     <div>
-      {/* Edit Modal */}
       {isEditing && selectedItem && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-primary100 p-6 rounded-lg shadow-lg w-96 flex flex-col gap-4">
             <h2 className="text-xl font-bold">
               Bewerk &quot;{selectedItem.name}&quot;
             </h2>
+
+            {/* File Upload Input */}
+            <div className="w-full flex flex-col items-center px-4 py-6 bg-primary rounded-lg shadow-lg text-white">
+              <ImageUp />
+              <span className="mt-2">Kies een afbeelding</span>
+              <label className="mt-2 w-full bg-primary500 text-white border border-white rounded-lg p-2 cursor-pointer text-center">
+                {uploadedImageName || "Kies een bestand"}
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </label>
+            </div>
+
+            {/* Other Input Fields */}
             <InputField
               label="Naam"
               type="text"
@@ -82,7 +136,7 @@ export default function EditModal({
               onChange={(e) =>
                 setSelectedItem({
                   ...selectedItem,
-                  category_id: parseInt(e.target.value),
+                  category_id: e.target.value,
                 })
               }
               placeholder="Kies een categorie"
@@ -144,7 +198,7 @@ export default function EditModal({
                 color="bg-red-400"
                 hoverColor="bg-red-900"
               />
-              <Button onClick={() => handleSave()} text="Opslaan" />
+              <Button onClick={handleSaveWithImage} text="Opslaan" />
             </div>
           </div>
         </div>

@@ -5,14 +5,16 @@ interface InputFieldProps {
   id: string;
   required?: boolean;
   placeholder: string;
-  value: string;
+  value?: string;
   onChange: (
-    event: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    event:
+      | React.ChangeEvent<
+          HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+        >
   ) => void;
   children?: React.ReactNode;
 }
+
 export default function InputField({
   label,
   type,
@@ -90,6 +92,32 @@ export default function InputField({
             )}
             {children}
           </select>
+        </div>
+      ) : type === "file" ? (
+        <div>
+          <label
+            htmlFor={id}
+            className="block text-sm font-medium text-gray-700"
+          >
+            {label}
+          </label>
+
+          <input
+            type={type}
+            name={name}
+            id={id}
+            required={required}
+            onChange={(e) => {
+              if (type === "file") {
+                if (e.target.files && e.target.files[0]) {
+                  onChange(e.target.files[0] as unknown as React.ChangeEvent<HTMLInputElement>);
+                }
+              } else {
+                onChange(e);
+              }
+            }}
+            className="mt-1 w-full rounded-md border-gray-200 shadow-xs sm:text-sm"
+          />
         </div>
       ) : (
         <div>

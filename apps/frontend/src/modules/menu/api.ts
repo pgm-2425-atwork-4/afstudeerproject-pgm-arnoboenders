@@ -12,45 +12,94 @@ export const getMenuItems = async (): Promise<MenuItem[] | null> => {
 };
 
 export const getCategories = async (): Promise<MenuCategory[] | null> => {
-  const { data, error } = await supabase.from("menu_category").select("*").order("sort_order", { ascending: true });
+  const { data, error } = await supabase
+    .from("menu_category")
+    .select("*")
+    .order("sort_order", { ascending: true });
   if (error) {
     throw error;
   }
   return data;
 };
 
-export const updateMenuItem = async (item: Partial<MenuItem>) => {
+export const updateMenuItem = async (item: Partial<MenuItem>, file?: File) => {
   if (!item.id) {
     throw new Error("Item ID is required for updating");
   }
 
-  const updateData: Partial<MenuItem> = {
-    ...(item.name && { name: item.name }),
-    ...(item.ingredients && { ingredients: item.ingredients }),
-    ...(item.price && { price: item.price }),
-    ...(item.is_new !== undefined && { is_new: item.is_new }),
-    ...(item.veggie !== undefined && { veggie: item.veggie }),
-    ...(item.category_id && { category_id: item.category_id }),
-    ...(item.order_number && { order_number: item.order_number }),
-    updated_at: new Date().toISOString(),
-  };
+  let fileName: string = item.image ?? `${Date.now()}-menu-item-image.jpg`; // Ensure fileName is a string
 
-  const { data, error } = await supabase
-    .from("menu")
-    .update(updateData)
-    .eq("id", item.id)
-    .select();
+  if (file) {
+    // If a new file is provided, upload it first and update with the new filename
+    fileName = `${Date.now()}-menu-item-image.jpg`; // Generate new filename
+    const reader = new FileReader();
 
-  if (error) {
-    console.error("Supabase Update Error:", error);
-    throw new Error(error.message);
+    return new Promise<Partial<MenuItem>>((resolve, reject) => {
+      reader.onloadend = async () => {
+        if (typeof reader.result === "string") {
+          try {
+            console.log("Uploading new image:", fileName);
+            await uploadImage(Bucket.MENU_ITEM, reader.result, fileName);
+            console.log("Image uploaded successfully:", fileName);
+
+            // Now update menu with the new image filename
+            const updateData: Partial<MenuItem> = {
+              ...item,
+              image: fileName, // Ensure updated image filename
+              updated_at: new Date().toISOString(),
+            };
+
+            const { data, error } = await supabase
+              .from("menu")
+              .update(updateData)
+              .eq("id", item.id)
+              .select();
+
+            if (error) {
+              console.error("Supabase Update Error:", error);
+              return reject(error);
+            }
+
+            if (!data || data.length === 0) {
+              return reject("Update failed: No data returned");
+            }
+
+            console.log("Menu updated successfully with new image:", data[0]);
+            resolve(data[0]); // Return updated menu item
+          } catch (error) {
+            return reject(error);
+          }
+        }
+      };
+
+      reader.readAsDataURL(file); // Convert file to Base64
+    });
+  } else {
+    // If no file is provided, update without modifying the image field
+    console.log("Updating menu without modifying image field");
+    const updateData: Partial<MenuItem> = {
+      ...item,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { data, error } = await supabase
+      .from("menu")
+      .update(updateData)
+      .eq("id", item.id)
+      .select();
+
+    if (error) {
+      console.error("Supabase Update Error:", error);
+      throw new Error(error.message);
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error("Update failed: No data returned");
+    }
+
+    console.log("Menu updated successfully without changing image:", data[0]);
+    return data[0]; // Return the updated menu item
   }
-
-  if (!data || data.length === 0) {
-    throw new Error("Update failed: No data returned");
-  }
-
-  return data[0];
 };
 
 export const createMenuItem = async (item: CreateMenuItem) => {
@@ -93,7 +142,9 @@ export const updateMenuImage = async (image: string) => {
   if (!image) {
     throw new Error("Image is required for updating");
   }
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   const fileName = `${Date.now()}-menu-image.jpg`;
 
   // Upload new image

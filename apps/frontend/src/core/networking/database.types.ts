@@ -36,9 +36,10 @@ export type Database = {
     Tables: {
       menu: {
         Row: {
-          category_id: string | null
+          category_id: string
           created_at: string
           id: string
+          image: string | null
           ingredients: Json | null
           is_new: boolean
           name: string
@@ -48,13 +49,14 @@ export type Database = {
           show_on_menu: boolean
           size: Json | null
           updated_at: string
-          user_id: string | null
+          user_id: string
           veggie: boolean
         }
         Insert: {
-          category_id?: string | null
+          category_id: string
           created_at?: string
           id?: string
+          image?: string | null
           ingredients?: Json | null
           is_new?: boolean
           name: string
@@ -64,13 +66,14 @@ export type Database = {
           show_on_menu?: boolean
           size?: Json | null
           updated_at?: string
-          user_id?: string | null
+          user_id: string
           veggie?: boolean
         }
         Update: {
-          category_id?: string | null
+          category_id?: string
           created_at?: string
           id?: string
+          image?: string | null
           ingredients?: Json | null
           is_new?: boolean
           name?: string
@@ -80,7 +83,7 @@ export type Database = {
           show_on_menu?: boolean
           size?: Json | null
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
           veggie?: boolean
         }
         Relationships: [

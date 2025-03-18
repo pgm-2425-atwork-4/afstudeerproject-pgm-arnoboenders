@@ -4,7 +4,6 @@ import OrderCard from "./OrderCard";
 
 export default function OrderList() {
   const orders = useOrders();
-
   return (
     <div>
       <div className="grid grid-cols-8 gap-4 items-center p-4 rounded-xl">
