@@ -108,11 +108,11 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
   return (
     <div className="flex flex-col  justify-center items-center gap-8">
       <div className="w-full flex flex-col items-center gap-8">
-        <div className="w-full p-4">
+        <div className="w-full">
           <h2>Menu-afbeelding uploaden</h2>
           <UploadImage />
         </div>
-        <div className="w-full flex justify-between items-center p-4">
+        <div className="w-full flex justify-between items-center">
           <h2>
             Gerechten{" "}
             <span className="text-sm text-gray-600">
