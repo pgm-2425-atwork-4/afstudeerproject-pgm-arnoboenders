@@ -34,6 +34,22 @@ interface Order {
 
 @Injectable()
 export class TakeawayService {
+  async getTimeSlotById(slotId: number): Promise<TakeawaySlot | null> {
+    console.log('Fetching takeaway slot with ID:', slotId);
+    const { data, error } = await supabase
+      .from('takeaway_time_slots')
+      .select('*')
+      .eq('id', slotId)
+      .single();
+
+    if (error) {
+      console.error('❌ Error fetching takeaway slot:', error);
+      return null;
+    }
+    console.log(data);
+    return data;
+  }
+
   async getNextAvailableTimes(): Promise<TakeawaySlot[]> {
     const now = new Date();
     now.setHours(now.getHours()); // Adjust for time difference if needed
