@@ -22,6 +22,9 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
   const [newItem, setNewItem] = useState<CreateMenuItem | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [categories, setCategories] = useState<MenuCategory[] | null>([]);
+  const [uploadedImageFile, setUploadedImageFile] = useState<File | undefined>(
+    undefined
+  ); // New state for image file
 
   useEffect(() => {
     getMenuItems().then((data) => {
@@ -56,19 +59,23 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
       return;
     }
     try {
+      // No need to pass `uploadedImageFile` again, as it was already handled in `EditModal.tsx`
       const updatedItem = await updateMenuItem(selectedItem);
 
-      // Update state with the new data
       setMenuItems((prevItems) =>
         prevItems.map((item) =>
           item.id === updatedItem.id ? updatedItem : item
         )
       );
+
+      // Update selectedItem with new image name
+      setSelectedItem(updatedItem);
     } catch (error) {
       console.error(error);
     }
     setIsEditing(false);
   };
+  
   const handleCreate = async () => {
     if (!newItem) {
       console.log("No item selected");
@@ -84,6 +91,10 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
         veggie: newItem.veggie,
         category_id: newItem.category_id,
         order_number: menuItems.length + 1,
+        image: newItem.image,
+        pasta: newItem.pasta,
+        show_on_menu: newItem.show_on_menu,
+        size: newItem.size,
       });
       if (createdItem) {
         setMenuItems((prevItems) => [...prevItems, createdItem]);
@@ -117,8 +128,12 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
                 price: 0,
                 is_new: false,
                 veggie: false,
-                category_id: 0,
+                category_id: "",
                 order_number: 0,
+                image: "",
+                pasta: "",
+                show_on_menu: true,
+                size: "",
               })
             }
             text="Voeg nieuw gerecht toe"
@@ -153,14 +168,18 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
         handleCreate={handleCreate}
         newItem={newItem}
       />
-      <EditModal
-        isEditing={isEditing}
-        setIsEditing={setIsEditing}
-        handleSave={handleEdit}
-        selectedItem={selectedItem}
-        categories={categories}
-        setSelectedItem={setSelectedItem}
-      />
+      <div>
+        <EditModal
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+          handleSave={handleEdit}
+          selectedItem={selectedItem}
+          categories={categories}
+          setSelectedItem={setSelectedItem}
+          uploadedImageFile={uploadedImageFile} // Pass file to modal
+          setUploadedImageFile={setUploadedImageFile} // Allow modal to update this state
+        />
+      </div>
     </div>
   );
 }

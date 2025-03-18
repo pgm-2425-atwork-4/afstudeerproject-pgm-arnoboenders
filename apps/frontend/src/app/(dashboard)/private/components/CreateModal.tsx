@@ -80,7 +80,7 @@ export default function CreateModal({
               onChange={(e) =>
                 setNewItem({
                   ...newItem,
-                  category_id: parseInt(e.target.value),
+                  category_id: e.target.value,
                 })
               }
               placeholder="Kies een categorie"
