@@ -30,7 +30,6 @@ export const fetchOrders = async (): Promise<Order[] | null> => {
     console.error("Error fetching orders:", error);
     return null;
   }
-  console.log("data", data);
   return Promise.resolve(data);
 };
 

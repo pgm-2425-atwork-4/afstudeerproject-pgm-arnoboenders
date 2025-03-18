@@ -9,9 +9,6 @@ export const uploadImage = async (
   const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
   const arrayBuffer = decode(base64Data); // Correctly decode Base64 into an ArrayBuffer
 
-  console.log("Uploading to bucket:", bucket);
-  console.log("File name:", fileName);
-
   const { data, error } = await supabase.storage
     .from(bucket)
     .upload(fileName, arrayBuffer, {
@@ -22,7 +19,5 @@ export const uploadImage = async (
     console.error("Upload error:", error);
     return Promise.reject(error);
   }
-
-  console.log("Upload success:", data);
   return Promise.resolve(data);
 };

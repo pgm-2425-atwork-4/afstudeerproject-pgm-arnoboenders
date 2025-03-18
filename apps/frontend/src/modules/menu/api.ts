@@ -36,9 +36,7 @@ export const updateMenuItem = async (item: Partial<MenuItem>, file?: File) => {
       reader.onloadend = async () => {
         if (typeof reader.result === "string") {
           try {
-            console.log("Uploading new image:", fileName);
             await uploadImage(Bucket.MENU_ITEM, reader.result, fileName ?? `${Date.now()}-menu-item-image.jpg`);
-            console.log("Image uploaded successfully:", fileName);
 
             // Now update menu with the new image filename
             const updateData: Partial<MenuItem> = {
@@ -61,8 +59,6 @@ export const updateMenuItem = async (item: Partial<MenuItem>, file?: File) => {
             if (!data || data.length === 0) {
               return reject("Update failed: No data returned");
             }
-
-            console.log("Menu updated successfully with new image:", data[0]);
             resolve(data[0]); // Return updated menu item
           } catch (error) {
             return reject(error);
@@ -74,7 +70,6 @@ export const updateMenuItem = async (item: Partial<MenuItem>, file?: File) => {
     });
   } else {
     // If no file is provided, update without modifying the image field
-    console.log("Updating menu without modifying image field");
     const updateData: Partial<MenuItem> = {
       ...item,
       updated_at: new Date().toISOString(),
@@ -95,7 +90,6 @@ export const updateMenuItem = async (item: Partial<MenuItem>, file?: File) => {
       throw new Error("Update failed: No data returned");
     }
 
-    console.log("Menu updated successfully without changing image:", data[0]);
     return data[0]; // Return the updated menu item
   }
 };
@@ -111,9 +105,7 @@ export const createMenuItem = async (item: CreateMenuItem, file?: File) => {
       reader.onloadend = async () => {
         if (typeof reader.result === "string") {
           try {
-            console.log("Uploading new image:", fileName);
             await uploadImage(Bucket.MENU_ITEM, reader.result, fileName ?? `${Date.now()}-menu-item-image.jpg`);
-            console.log("Image uploaded successfully:", fileName);
           } catch (error) {
             console.error("Image upload failed:", error);
             return reject(error);
@@ -140,7 +132,6 @@ export const createMenuItem = async (item: CreateMenuItem, file?: File) => {
               return reject("Insert failed: No data returned");
             }
 
-            console.log("Menu item created successfully:", data[0]);
             resolve(data[0]); // Return created menu item
           } catch (error) {
             return reject(error);
