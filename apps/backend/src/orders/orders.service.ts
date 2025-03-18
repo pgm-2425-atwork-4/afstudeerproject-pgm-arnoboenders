@@ -18,9 +18,35 @@ export class OrdersService {
     if (error) throw error;
     return data || [];
   }
-  async updateOrder(orderData): Promise<any[]> {
-    const { data, error } = await supabase.from('orders').update(orderData);
-    if (error) throw error;
-    return data || [];
+
+  async getOrderById(orderId: string): Promise<any> {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', orderId)
+      .single();
+    if (error) {
+      console.error('❌ Error fetching order:', error);
+      return null;
+    }
+    return data;
+  }
+
+  async findOrder(phoneNumber: string, takeAwayTime: string): Promise<any> {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('phone_number', phoneNumber)
+      .eq('take_away_time', takeAwayTime)
+      .order('id', { ascending: false }) // Get the most recent order
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error('❌ Error finding order:', error);
+      return null;
+    }
+
+    return data;
   }
 }

@@ -1,7 +1,13 @@
+import { orderSchema } from "@/app/schemas/order";
 import { assignTimeSlot, createOrder } from "@/modules/order/api";
 import { OrderItem } from "@/modules/order/types";
 import { TimeSlot } from "@/modules/time-slots/types";
-import { z } from "zod";
+import { loadStripe } from "@stripe/stripe-js";
+import { redirect } from "next/navigation";
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || ""
+);
 
 interface SubmitOrderProps {
   aggregatedOrders: OrderItem[];
@@ -10,20 +16,8 @@ interface SubmitOrderProps {
   customerName: string;
   phoneNumber: string;
   emptyOrders: () => void;
-  setError: (error: string) => void; // Add this function to set errors
+  setError: (error: string) => void;
 }
-
-const orderSchema = z.object({
-  customerName: z.string().min(1, "Vul uw naam in."),
-  phoneNumber: z
-    .string()
-    .min(1, "Vul uw telefoonnummer in")
-    .regex(/^\d+$/, "Telefoonnummer moet uit cijfers bestaan"),
-  selectedTime: z
-    .number()
-    .nullable()
-    .refine((val) => val !== null, "Selecteer een afhaaltijd."),
-});
 
 export const handleOrderSubmit = async ({
   aggregatedOrders,
@@ -35,9 +29,8 @@ export const handleOrderSubmit = async ({
   setError,
   event,
 }: SubmitOrderProps & { event: React.FormEvent }) => {
-  event.preventDefault(); // Prevent default form submission
+  event.preventDefault();
 
-  // Validate input using Zod
   const validationResult = orderSchema.safeParse({
     customerName,
     phoneNumber,
@@ -45,8 +38,7 @@ export const handleOrderSubmit = async ({
   });
 
   if (!validationResult.success) {
-    const errorMessage = validationResult.error.errors[0]?.message;
-    setError(errorMessage);
+    setError(validationResult.error.errors[0]?.message);
     return;
   }
 
@@ -60,6 +52,7 @@ export const handleOrderSubmit = async ({
   }
 
   const orderData = {
+    orderId: Math.random().toString(36).substr(2, 9), // Generate order ID
     price: aggregatedOrders.reduce((acc, order) => acc + order.price, 0),
     order_data: aggregatedOrders.map(({ id, amount, name, price }) => ({
       id,
@@ -73,18 +66,30 @@ export const handleOrderSubmit = async ({
   };
 
   try {
-    const response = await createOrder(orderData);
+    // Step 1: Request a Stripe Checkout Session
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/orders/create-checkout-session`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      }
+    );
 
-    if (response.success && response.order_data.length > 0) {
-      const orderId = response.order_data[0].id;
-      await assignTimeSlot(selectedSlot, orderId);
-      emptyOrders();
-    } else {
-      console.error("Unexpected orderData format:", response.order_data);
-      setError("Er is een fout opgetreden bij het plaatsen van de bestelling.");
+    const session = await response.json();
+
+    if (!session.sessionId) {
+      setError("Betaling kon niet worden gestart.");
+      return;
     }
+
+    // Step 2: Redirect to Stripe Checkout
+    const stripe = await stripePromise;
+    if (!stripe) throw new Error("Stripe failed to load.");
+
+    await stripe.redirectToCheckout({ sessionId: session.sessionId });
   } catch (error) {
-    console.error("Fout bij het plaatsen van de bestelling:", error);
-    setError("Kon bestelling niet plaatsen. Probeer het later opnieuw.");
+    console.error("Fout bij het starten van de betaling:", error);
+    setError("Kon betaling niet starten. Probeer het later opnieuw.");
   }
 };
