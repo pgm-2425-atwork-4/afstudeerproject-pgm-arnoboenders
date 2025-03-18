@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function ItemCard({ item }: { item: MenuItem }) {
-  console.log("ItemCard", item);
   return (
     <Link
       href="/menu"
