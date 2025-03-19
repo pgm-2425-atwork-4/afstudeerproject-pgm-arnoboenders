@@ -6,17 +6,17 @@ import {
   Req,
   Get,
   Query,
+  Res,
 } from '@nestjs/common';
 import { StripeService } from './stripe/stripe.service';
 import { OrdersService } from './orders.service';
 import { TakeawayService } from 'src/takeaway/takeaway.service';
+import Stripe from 'stripe';
+import { Request, Response } from 'express';
 
-interface TakeawaySlot {
-  id: number; // Changed from string to number
-  time_slot: string;
-  current_orders: number;
-  max_orders: number;
-}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+  apiVersion: '2025-02-24.acacia',
+});
 
 interface OrderData {
   orderId: string; // Changed from number to string
@@ -77,22 +77,30 @@ export class OrdersController {
   @Post('webhook')
   async handleWebhook(
     @Headers('stripe-signature') signature: string,
-    @Req() request: { body: StripeEvent },
+    @Req() request: Request,
+    @Res() response: Response,
   ) {
-    const event = request.body;
+    let event: Stripe.Event;
+    try {
+      // Verify the Stripe event using the webhook secret
+      event = stripe.webhooks.constructEvent(
+        request.body,
+        signature,
+        process.env.STRIPE_WEBHOOK_SECRET || '',
+      );
+    } catch (err) {
+      console.error('❌ Webhook signature verification failed:', err.message);
+      return response.status(400).send(`Webhook Error: ${err.message}`);
+    }
 
     if (event.type === 'checkout.session.completed') {
       try {
-        console.log('✅ Processing checkout.session.completed event...');
-
         // Ensure metadata exists before accessing it
         const metadata = event.data.object.metadata;
         if (!metadata) {
           console.error('❌ Missing metadata in Stripe session.');
           return { success: false, message: 'Missing order metadata' };
         }
-
-        console.log('ℹ️ Stripe session metadata:', metadata);
 
         if (!metadata.take_away_time) {
           console.error('❌ Missing takeaway time in metadata.');
@@ -123,10 +131,9 @@ export class OrdersController {
           phone_number: metadata.phone_number,
           take_away_time: takeawaySlot.id, // Use correct takeaway slot ID
           order_data: JSON.parse(metadata.order_data) as OrderItem[],
-          price: event.data.object.amount_total / 100, // Convert from cents
+          price: event.data.object.amount_total! / 100, // Convert from cents
         };
 
-        console.log('📦 Inserting order into database:', orderData);
         const createdOrder = await this.ordersService.createOrder(orderData);
 
         if (!createdOrder || createdOrder.length === 0) {
@@ -137,13 +144,9 @@ export class OrdersController {
         // Retrieve the generated orderId (auto-incremented)
         const orderId: string = createdOrder[0].id;
 
-        console.log('✅ Order created with ID:', orderId);
-
         // Assign order to the takeaway slot
-        console.log('📦 Assigning order to timeslot:', takeawaySlot);
         await this.takeawayService.assignOrderToTimeSlot(takeawaySlot, orderId);
 
-        console.log('✅ Order successfully created and assigned to timeslot!');
         return {
           success: true,
           message: 'Order created successfully after payment',
@@ -171,7 +174,6 @@ export class OrdersController {
     const paymentStatus = await this.stripeService.verifyPayment(sessionId);
 
     if (paymentStatus.success && paymentStatus.orderId) {
-      console.log('✅ Payment Verified:', paymentStatus);
       return { success: true, orderId: paymentStatus.orderId };
     } else {
       console.error('❌ Payment failed:', paymentStatus.message);
