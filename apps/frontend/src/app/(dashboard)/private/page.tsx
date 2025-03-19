@@ -4,13 +4,6 @@ import { redirect } from "next/navigation";
 import EditMenu from "@/app/(dashboard)/private/components/EditMenu";
 import LogoutButton from "@/components/functional/button/LogoutButton";
 import { useAuthContext } from "@/components/context/AuthProvider";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Loos-backoffice | Menu beheer",
-  description: "Backoffice loos merchtem",
-};
-
 
 export default function PrivatePage() {
   const { user } = useAuthContext();
