@@ -65,7 +65,7 @@ export class StripeService {
 
       if (session.payment_status === 'paid') {
         if (session.metadata) {
-          const { phone_number, take_away_time, order_data } = session.metadata;
+          const { phone_number, take_away_time } = session.metadata;
 
           if (!phone_number || !take_away_time) {
             console.error(
