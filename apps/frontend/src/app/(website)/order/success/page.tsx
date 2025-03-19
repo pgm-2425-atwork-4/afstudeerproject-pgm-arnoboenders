@@ -1,6 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Loos-merchtem | Betaling geslaagd!",
+  description: "Website loos merchtem",
+};
 
 export default function PaymentSuccess() {
   const searchParams = useSearchParams();

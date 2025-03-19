@@ -1,3 +1,10 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Loos-merchtem | Privacy & Cookies",
+  description: "Website loos merchtem",
+};
+
 export default function PrivacyCookies() {
   return (
     <div className="container my-32">

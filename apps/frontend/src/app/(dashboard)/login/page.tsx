@@ -1,6 +1,12 @@
 import Image from "next/image";
 
 import LoginForm from "@/components/functional/forms/LoginForm";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Loos-backoffice | Login",
+  description: "Backoffice loos merchtem",
+};
 
 export default async function LoginPage() {
   return (

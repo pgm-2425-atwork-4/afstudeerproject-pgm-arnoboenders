@@ -1,5 +1,11 @@
 import Button from "@/components/functional/button/Button";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Loos-merchtem | Contact",
+  description: "Website loos merchtem",
+};
 
 export default function About() {
   return (
