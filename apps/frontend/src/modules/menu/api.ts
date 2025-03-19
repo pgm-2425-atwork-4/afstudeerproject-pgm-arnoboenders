@@ -26,17 +26,21 @@ export const updateMenuItem = async (item: Partial<MenuItem>, file?: File) => {
   if (!item.id) {
     throw new Error("Item ID is required for updating");
   }
-
+  let fileName: string | null = item.image ?? null;
   if (file) {
-    const fileName: string = item.image ?? `${Date.now()}-menu-item-image.jpg`; // Ensure fileName is a string
+    fileName = `${Date.now()}-menu-item-image.jpg`; // Ensure fileName is a string
+    console.log("fileName", fileName);
     // If a new file is provided, upload it first and update with the new filename
     const reader = new FileReader();
-
     return new Promise<Partial<MenuItem>>((resolve, reject) => {
       reader.onloadend = async () => {
         if (typeof reader.result === "string") {
           try {
-            await uploadImage(Bucket.MENU_ITEM, reader.result, fileName ?? `${Date.now()}-menu-item-image.jpg`);
+            await uploadImage(
+              Bucket.MENU_ITEM,
+              reader.result,
+              fileName ?? `${Date.now()}-menu-item-image.jpg`
+            );
 
             // Now update menu with the new image filename
             const updateData: Partial<MenuItem> = {
@@ -105,7 +109,11 @@ export const createMenuItem = async (item: CreateMenuItem, file?: File) => {
       reader.onloadend = async () => {
         if (typeof reader.result === "string") {
           try {
-            await uploadImage(Bucket.MENU_ITEM, reader.result, fileName ?? `${Date.now()}-menu-item-image.jpg`);
+            await uploadImage(
+              Bucket.MENU_ITEM,
+              reader.result,
+              fileName ?? `${Date.now()}-menu-item-image.jpg`
+            );
           } catch (error) {
             console.error("Image upload failed:", error);
             return reject(error);
