@@ -44,7 +44,7 @@ export default function Footer() {
           Inge Desmedt{" "}
         </Link>
         |{" "}
-        <Link className="hover:text-primary200" href="/privacy&cookies">
+        <Link className="hover:text-primary200" href="/privacy-cookies">
           Privacy & Cookies
         </Link>
       </div>
