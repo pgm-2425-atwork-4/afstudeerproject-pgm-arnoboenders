@@ -81,10 +81,11 @@ export class OrdersController {
     @Res() response: Response,
   ) {
     let event: Stripe.Event;
+
     try {
-      // Verify the Stripe event using the webhook secret
+      // 🚀 Fix: Ensure `request.body` is used as a raw buffer
       event = stripe.webhooks.constructEvent(
-        request.body,
+        request.body, // MUST BE A BUFFER
         signature,
         process.env.STRIPE_WEBHOOK_SECRET!,
       );
@@ -146,7 +147,7 @@ export class OrdersController {
 
         // Assign order to the takeaway slot
         await this.takeawayService.assignOrderToTimeSlot(takeawaySlot, orderId);
-
+        // Return a successful response
         return response.status(200).send({ success: true });
       } catch (error) {
         console.error('❌ Error processing order:', error);
