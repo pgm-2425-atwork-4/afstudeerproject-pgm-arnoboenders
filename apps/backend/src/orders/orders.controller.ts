@@ -86,7 +86,7 @@ export class OrdersController {
       event = stripe.webhooks.constructEvent(
         request.body,
         signature,
-        process.env.STRIPE_WEBHOOK_SECRET || '',
+        process.env.STRIPE_WEBHOOK_SECRET!,
       );
     } catch (err) {
       console.error('❌ Webhook signature verification failed:', err.message);
@@ -147,10 +147,7 @@ export class OrdersController {
         // Assign order to the takeaway slot
         await this.takeawayService.assignOrderToTimeSlot(takeawaySlot, orderId);
 
-        return {
-          success: true,
-          message: 'Order created successfully after payment',
-        };
+        return response.status(200).send({ success: true });
       } catch (error) {
         console.error('❌ Error processing order:', error);
         return { success: false, message: 'Error processing order' };
