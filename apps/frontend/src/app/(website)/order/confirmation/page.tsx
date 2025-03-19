@@ -4,12 +4,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Button from "@/components/functional/button/Button";
 import { getTime } from "@/modules/time-slots/api";
 import Image from "next/image";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Loos-merchtem | Bestelling bevestigd",
-  description: "Website loos merchtem",
-};
 
 interface OrderDetails {
   name: string;
