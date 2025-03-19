@@ -1,7 +1,13 @@
 import MenuList from "@/components/design/menu-items/MenuList";
 import { getMenuImage, getMenuItems } from "@/modules/menu/api";
 import { getMenuImageUrl } from "@/modules/storage/utils";
+import { Metadata } from "next";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Loos-merchtem | Menu",
+  description: "Website loos merchtem",
+};
 
 export default async function Menu() {
   const menuItems = await getMenuItems();
