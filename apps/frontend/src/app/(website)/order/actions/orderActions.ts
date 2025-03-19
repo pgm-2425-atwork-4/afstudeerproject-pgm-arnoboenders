@@ -1,9 +1,7 @@
 import { orderSchema } from "@/app/schemas/order";
-import { assignTimeSlot, createOrder } from "@/modules/order/api";
 import { OrderItem } from "@/modules/order/types";
 import { TimeSlot } from "@/modules/time-slots/types";
 import { loadStripe } from "@stripe/stripe-js";
-import { redirect } from "next/navigation";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || ""
@@ -15,7 +13,6 @@ interface SubmitOrderProps {
   availableTimeSlots: TimeSlot[];
   customerName: string;
   phoneNumber: string;
-  emptyOrders: () => void;
   setError: (error: string) => void;
 }
 
@@ -25,7 +22,6 @@ export const handleOrderSubmit = async ({
   availableTimeSlots,
   customerName,
   phoneNumber,
-  emptyOrders,
   setError,
   event,
 }: SubmitOrderProps & { event: React.FormEvent }) => {
