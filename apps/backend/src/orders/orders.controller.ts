@@ -81,10 +81,6 @@ export class OrdersController {
     @Res() response: Response,
   ) {
     let event: Stripe.Event;
-    console.log('STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY);
-    console.log('STRIPE_WEBHOOK_SECRET:', process.env.STRIPE_WEBHOOK_SECRET);
-    console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
-    console.log('PORT:', process.env.PORT);
     try {
       // 🚀 Fix: Ensure `request.body` is a Buffer
       event = stripe.webhooks.constructEvent(
