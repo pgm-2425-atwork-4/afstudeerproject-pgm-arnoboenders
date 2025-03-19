@@ -93,10 +93,7 @@ export class OrdersController {
       return response.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    console.log(`✅ Received Stripe event: ${event.type}`);
-
     if (event.type === 'checkout.session.completed') {
-      console.log('✅ Checkout session completed:', event.data.object);
       try {
         // Ensure metadata exists before accessing it
         const metadata = event.data.object.metadata;
