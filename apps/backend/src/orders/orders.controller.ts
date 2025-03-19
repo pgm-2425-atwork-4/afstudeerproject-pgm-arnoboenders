@@ -81,9 +81,12 @@ export class OrdersController {
     @Res() response: Response,
   ) {
     let event: Stripe.Event;
-
+    console.log('STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY);
+    console.log('STRIPE_WEBHOOK_SECRET:', process.env.STRIPE_WEBHOOK_SECRET);
+    console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
+    console.log('PORT:', process.env.PORT);
     try {
-      // 🚀 Fix: Ensure `request.body` is used as a raw buffer
+      // 🚀 Fix: Ensure `request.body` is a Buffer
       event = stripe.webhooks.constructEvent(
         request.body, // MUST BE A BUFFER
         signature,
@@ -94,7 +97,10 @@ export class OrdersController {
       return response.status(400).send(`Webhook Error: ${err.message}`);
     }
 
+    console.log(`✅ Received Stripe event: ${event.type}`);
+
     if (event.type === 'checkout.session.completed') {
+      console.log('✅ Checkout session completed:', event.data.object);
       try {
         // Ensure metadata exists before accessing it
         const metadata = event.data.object.metadata;
