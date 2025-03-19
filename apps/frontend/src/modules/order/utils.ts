@@ -21,10 +21,10 @@ export const useOrders = () => {
         setOrders(fetchedOrders);
       }
     });
-
-    const subscription = supabase
-      .channel("orders-channel")
-      .on(
+    const channel = supabase
+    .channel("orders-channel")
+    .on(
+        // @ts-expect-error: Supabase client does not have a strict type for "postgres_changes"
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
         (payload: OrderPayload) => {
@@ -45,7 +45,7 @@ export const useOrders = () => {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(subscription); // Cleanup on unmount
+      supabase.removeChannel(channel);
     };
   }, []);
 

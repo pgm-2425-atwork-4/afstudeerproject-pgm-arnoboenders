@@ -25,7 +25,7 @@ export default function OrderBox({
   showForm = false,
   buttonText = "Bestel",
 }: OrderBoxProps) {
-  const { orders: rawOrders, emptyOrders, removeOrder } = useOrders();
+  const { orders: rawOrders, removeOrder } = useOrders();
   const orders: OrderItem[] = rawOrders.map((order) => ({
     ...order,
     size: order.size as Size,
@@ -113,7 +113,6 @@ export default function OrderBox({
               availableTimeSlots,
               customerName,
               phoneNumber,
-              emptyOrders,
               setError,
             });
           }}
