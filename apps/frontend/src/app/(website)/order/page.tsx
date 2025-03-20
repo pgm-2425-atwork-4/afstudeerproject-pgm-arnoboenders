@@ -1,5 +1,11 @@
+import { Metadata } from "next";
 import OrderBox from "./components/OrderBox";
 import OrderMenu from "./components/OrderMenu";
+
+export const metadata: Metadata = {
+  title: "Loos-merchtem | Bestel",
+  description: "Website loos merchtem",
+};
 
 export default function OrderPage() {
   return (
