@@ -23,6 +23,18 @@ export const createOrder = async (
   return response.json() as Promise<CreateOrderResponse>;
 };
 
+export const deleteOrder = async (orderId: number): Promise<Order[] | null> => {
+  const { data, error } = await supabase
+    .from("orders")
+    .delete()
+    .eq("id", orderId);
+  if (error) {
+    console.error("Error deleting order:", error);
+    return null;
+  }
+  return Promise.resolve(data);
+};
+
 export const fetchOrders = async (): Promise<Order[] | null> => {
   const { data, error } = await supabase.from("orders").select("*");
 

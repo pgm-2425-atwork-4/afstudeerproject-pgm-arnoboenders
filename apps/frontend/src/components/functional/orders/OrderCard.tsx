@@ -1,4 +1,5 @@
 "use client";
+import { deleteOrder } from "@/modules/order/api";
 import { Order, OrderItem } from "@/modules/order/types";
 import { getTime } from "@/modules/time-slots/api";
 import { Edit, Trash2 } from "lucide-react";
@@ -17,15 +18,15 @@ export default function OrderCard({ order }: { order: Order }) {
     fetchTime();
   }, [order.take_away_time]);
   return (
-    <div className="grid grid-cols-8 gap-4 items-center bg-primary50 p-4 rounded-xl shadow-lg">
+    <div className="grid grid-cols-11 gap-4 items-center bg-primary50 p-4 rounded-xl shadow-lg">
       <div className="flex justify-center">
         <input type="checkbox" />
       </div>
       <p className="flex justify-center">{order.name}</p>
-      <p className="flex justify-center">{order.phone_number}</p>
+      <p className="flex justify-center col-span-2">{order.phone_number}</p>
       <p className="flex justify-center">{time?.slice(0, 5)}</p>
       <p className="flex justify-center">€ {order.price}</p>
-      <ul className="col-span-2 flex flex-col gap-2 mx-auto">
+      <ul className="col-span-3 flex flex-col gap-2">
         {Array.isArray(order.order_data) &&
           (order.order_data as OrderItem[]).map(
             (item: OrderItem) =>
@@ -37,11 +38,11 @@ export default function OrderCard({ order }: { order: Order }) {
               )
           )}
       </ul>
-      <div className="flex justify-end gap-4">
+      <div className="flex justify-center gap-4 col-span-2">
         <button className="btn-primary">
           <Edit />
         </button>
-        <button>
+        <button onClick={() => deleteOrder(order.id)}>
           <Trash2 />
         </button>
       </div>
