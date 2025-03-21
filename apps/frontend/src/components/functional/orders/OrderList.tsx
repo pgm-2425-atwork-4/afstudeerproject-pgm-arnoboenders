@@ -35,10 +35,13 @@ export default function OrderList() {
       <ul>
         {todaysOrders
           .sort((a, b) => {
-            return (
-              new Date(a.take_away_time).getTime() -
-              new Date(b.take_away_time).getTime()
-            );
+            if (a.picked_up === b.picked_up) {
+              return (
+                new Date(a.take_away_time).getTime() -
+                new Date(b.take_away_time).getTime()
+              );
+            }
+            return a.picked_up ? 1 : -1;
           })
           .map((order) => (
             <li key={order.id} className="my-4">
