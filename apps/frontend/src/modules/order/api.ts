@@ -23,8 +23,37 @@ export const createOrder = async (
   return response.json() as Promise<CreateOrderResponse>;
 };
 
+export async function updateOrderStatus(orderId: number, pickedUp: boolean) {
+  const { data, error } = await supabase
+    .from("orders")
+    .update({ picked_up: pickedUp })
+    .eq("id", orderId)
+    .select();
+
+  if (error) throw error;
+  return data;
+}
+
+export const deleteOrder = async (orderId: number): Promise<Order[] | null> => {
+  const { data, error } = await supabase
+    .from("orders")
+    .delete()
+    .eq("id", orderId);
+  if (error) {
+    console.error("Error deleting order:", error);
+    return null;
+  }
+  return Promise.resolve(data);
+};
+
 export const fetchOrders = async (): Promise<Order[] | null> => {
-  const { data, error } = await supabase.from("orders").select("*");
+  const { data, error } = await supabase.from("orders").select(`
+    *,
+    takeaway_time_slot:take_away_time (
+      id,
+      day_of_week
+    )
+  `);
 
   if (error) {
     console.error("Error fetching orders:", error);

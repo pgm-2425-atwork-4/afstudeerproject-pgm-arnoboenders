@@ -3,10 +3,12 @@ import { AuthChangeEvent } from "@supabase/supabase-js";
 import { Auth } from "@/modules/auth/types";
 import { getCurrentSession, login } from "@/modules/auth/api";
 import { supabase } from "@/core/networking/api";
+import { useRouter } from "next/navigation";
 
 const useSupabaseAuth = () => {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [auth, setAuth] = useState<Auth | null>(null);
+  const router = useRouter();
 
   const fetchAuth = useCallback(async () => {
     try {
@@ -53,7 +55,8 @@ const useSupabaseAuth = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    setAuth(null);
+    router.push("/login");
+    router.refresh();
   };
   const isLoggedIn = isInitialized && !!auth;
 

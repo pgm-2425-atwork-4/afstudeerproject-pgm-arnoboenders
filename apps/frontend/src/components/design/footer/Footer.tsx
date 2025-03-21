@@ -18,10 +18,16 @@ export default function Footer() {
         </Link>
       </div>
       <div className="flex gap-4">
-        <Link className="hover:text-primary200" href="instagram.com">
+        <Link
+          className="hover:text-primary200"
+          href="https://www.instagram.com/loos_merchtem/"
+        >
           <Instagram />
         </Link>
-        <Link className="hover:text-primary200" href="instagram.com">
+        <Link
+          className="hover:text-primary200"
+          href="https://www.facebook.com/loosmerchtem.be/"
+        >
           <Facebook />
         </Link>
       </div>
@@ -38,7 +44,7 @@ export default function Footer() {
           Inge Desmedt{" "}
         </Link>
         |{" "}
-        <Link className="hover:text-primary200" href="/privacy&cookies">
+        <Link className="hover:text-primary200" href="/privacy-cookies">
           Privacy & Cookies
         </Link>
       </div>

@@ -34,7 +34,7 @@ export class StripeService {
           price_data: {
             currency: 'eur',
             product_data: { name: item.name },
-            unit_amount: Math.round(item.price * 100), // Convert to cents
+            unit_amount: Math.round((item.price / item.amount) * 100),
           },
           quantity: item.amount,
         })),

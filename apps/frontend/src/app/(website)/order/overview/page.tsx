@@ -1,5 +1,11 @@
+import { Metadata } from "next";
 import OrderBox from "../components/OrderBox";
 import BackButton from "@/components/functional/button/BackButton";
+
+export const metadata: Metadata = {
+  title: "Loos-merchtem | Bestel overzicht",
+  description: "Website loos merchtem",
+};
 
 export default function OrderOverview() {
   const path: string = "order";
