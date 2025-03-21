@@ -1,5 +1,5 @@
 interface InputFieldProps {
-  label: string;
+  label?: string;
   type: string;
   name: string;
   id: string;
@@ -13,6 +13,7 @@ interface InputFieldProps {
         >
   ) => void;
   children?: React.ReactNode;
+  checked?: boolean;
 }
 
 export default function InputField({
@@ -25,6 +26,7 @@ export default function InputField({
   value,
   onChange,
   children,
+  checked,
 }: InputFieldProps) {
   return (
     <>
@@ -60,9 +62,9 @@ export default function InputField({
                 name={name}
                 id={id}
                 required={required}
-                checked={value === "true"}
+                checked={checked}
                 onChange={onChange}
-                className="size-4 rounded-sm border-none"
+                className="size-4 rounded-sm border-none cursor-pointer"
               />
             </div>
 

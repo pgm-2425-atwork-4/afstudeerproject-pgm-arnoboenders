@@ -1,4 +1,4 @@
-import Button from "@/components/functional/button/Button";
+import ContactForm from "@/components/functional/forms/ContactForm";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -60,43 +60,7 @@ export default function About() {
             </div>
           </div>
           <div>
-            <form className="flex flex-col gap-1">
-              <h2>Stuur een bericht</h2>
-              <label htmlFor="name" className="text-sm">
-                Naam
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                className="border border-gray-300 p-2 rounded"
-                required
-              />
-
-              <label htmlFor="email" className="text-sm">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                className="border border-gray-300 p-2 rounded"
-                required
-              />
-
-              <label htmlFor="message" className="text-sm">
-                Bericht
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                className="border border-gray-300 p-2 rounded"
-                rows={4}
-                required
-              ></textarea>
-
-              <Button text="Verstuur" type="submit" />
-            </form>
+            <ContactForm />
           </div>
           <div className="flex flex-col">
             <p className="max-w-lg">Nieuwstraat 4 - 1785 Merchtem</p>

@@ -151,8 +151,9 @@ export type Database = {
           name: string
           order_data: Json
           phone_number: string
+          picked_up: boolean
           price: number
-          take_away_time: number | null
+          take_away_time: number
           updated_at: string
         }
         Insert: {
@@ -161,8 +162,9 @@ export type Database = {
           name: string
           order_data: Json
           phone_number: string
+          picked_up?: boolean
           price: number
-          take_away_time?: number | null
+          take_away_time: number
           updated_at?: string
         }
         Update: {
@@ -171,8 +173,9 @@ export type Database = {
           name?: string
           order_data?: Json
           phone_number?: string
+          picked_up?: boolean
           price?: number
-          take_away_time?: number | null
+          take_away_time?: number
           updated_at?: string
         }
         Relationships: [
