@@ -1,8 +1,7 @@
-import { supabase } from "@/core/networking/api";
 import { useEffect, useState } from "react";
+import { supabase } from "@/core/networking/api";
 import { fetchOrders } from "./api";
-import { Order } from "./types";
-import { OrderItem } from "@/modules/order/types";
+import { Order, OrderItem } from "./types";
 
 interface OrderPayload {
   eventType: "INSERT" | "UPDATE" | "DELETE";
@@ -13,9 +12,8 @@ interface OrderPayload {
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
 
-  // Fetch initial orders
-
   useEffect(() => {
+    // Initial fetch
     fetchOrders().then((fetchedOrders) => {
       if (fetchedOrders) {
         setOrders(fetchedOrders);
@@ -27,29 +25,26 @@ export const useOrders = () => {
       .on(
         // @ts-expect-error: Supabase client does not have a strict type for "postgres_changes"
         "postgres_changes",
-        { event: "*", schema: "public", table: "orders" },
+        {
+          event: "*",
+          schema: "public",
+          table: "orders",
+        },
         async (payload: OrderPayload) => {
           if (
             payload.eventType === "INSERT" ||
-            payload.eventType === "DELETE"
+            payload.eventType === "UPDATE"
           ) {
-            setOrders((prevOrders) => {
-              if (payload.eventType === "INSERT") {
-                return [...prevOrders, payload.new];
-              } else {
-                return prevOrders.filter(
-                  (order) => order.id !== payload.old.id
-                );
-              }
-            });
-          }
-
-          if (payload.eventType === "UPDATE") {
-            const fresh = await fetchOrders(); // <- force refetch
+            const fresh = await fetchOrders();
             if (fresh) setOrders(fresh);
+          } else if (payload.eventType === "DELETE") {
+            setOrders((prev) =>
+              prev.filter((order) => order.id !== payload.old.id)
+            );
           }
         }
       )
+
       .subscribe();
 
     return () => {
