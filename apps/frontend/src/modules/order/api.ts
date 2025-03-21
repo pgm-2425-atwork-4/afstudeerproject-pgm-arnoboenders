@@ -45,7 +45,13 @@ export const deleteOrder = async (orderId: number): Promise<Order[] | null> => {
 };
 
 export const fetchOrders = async (): Promise<Order[] | null> => {
-  const { data, error } = await supabase.from("orders").select("*");
+  const { data, error } = await supabase.from("orders").select(`
+    *,
+    takeaway_time_slot:take_away_time (
+      id,
+      day_of_week
+    )
+  `);
 
   if (error) {
     console.error("Error fetching orders:", error);
