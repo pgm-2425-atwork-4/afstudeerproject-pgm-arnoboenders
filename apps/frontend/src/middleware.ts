@@ -19,7 +19,6 @@ export async function middleware(req: NextRequest) {
   );
 
   const { data: user } = await supabase.auth.getUser();
-  console.log("user", user);
 
   const isAuthenticated = !!user.user;
 
