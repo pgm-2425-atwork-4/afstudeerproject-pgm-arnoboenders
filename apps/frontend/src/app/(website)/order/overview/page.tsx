@@ -14,7 +14,7 @@ export default function OrderOverview() {
       <h1>Bestel overzicht</h1>
       <BackButton path={path} />
       <div className="flex justify-center">
-        <div className="w-1/2">
+        <div className="w-full md:w-1/2">
           <OrderBox
             layout="fullwidth"
             showForm={true}
