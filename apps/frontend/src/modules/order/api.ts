@@ -24,12 +24,14 @@ export const createOrder = async (
 };
 
 export async function updateOrderStatus(orderId: number, pickedUp: boolean) {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("orders")
     .update({ picked_up: pickedUp })
-    .eq("id", orderId);
+    .eq("id", orderId)
+    .select();
 
   if (error) throw error;
+  return data;
 }
 
 export const deleteOrder = async (orderId: number): Promise<Order[] | null> => {
