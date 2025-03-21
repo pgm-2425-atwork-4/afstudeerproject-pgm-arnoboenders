@@ -10,7 +10,11 @@ export const metadata: Metadata = {
 export default function OrderPage() {
   return (
     <div className="container my-32">
-      <h1>Bestel</h1>
+      <h1 className="mb-0">Bestel</h1>
+      <p className="text-sm mb-8 italic">
+        Je kan enkel bestellen voor vandaag. Na het plaatsen van je bestelling
+        is aanpassen helaas niet meer mogelijk.
+      </p>
       <div className="flex flex-col lg:flex-row-reverse justify-between gap-8">
         <div className="lg:w-1/3">
           <OrderBox layout="sticky" />
