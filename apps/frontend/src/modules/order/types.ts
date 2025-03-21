@@ -3,6 +3,10 @@ import { Pasta, Size } from "../menu/types";
 
 export type Order = Tables<"orders"> & {
   order_items: OrderItem[];
+  takeaway_time_slot?: {
+    id: number;
+    day_of_week: string;
+  };
 };
 
 export type OrderItem = {
