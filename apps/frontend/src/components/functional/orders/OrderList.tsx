@@ -4,7 +4,6 @@ import OrderCard from "./OrderCard";
 
 export default function OrderList() {
   const orders = useOrders();
-  console.log(orders);
   const days = [
     "Sunday",
     "Monday",
@@ -17,7 +16,6 @@ export default function OrderList() {
 
   const today = new Date();
   const todayName = days[today.getDay()]; // returns e.g. "Friday"
-  console.log(todayName);
   const todaysOrders = orders?.filter(
     (order) => order.takeaway_time_slot?.day_of_week === todayName
   );

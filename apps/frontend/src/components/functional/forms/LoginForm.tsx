@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams, redirect } from "next/navigation";
+import { useAuthContext } from "@/components/context/AuthProvider";
 import Button from "@/components/functional/button/Button";
 import InputField from "@/components/functional/input/InputField";
 import { loginSchema } from "@/app/schemas/login";
-import { redirect } from "next/navigation";
-import { useAuthContext } from "@/components/context/AuthProvider";
 
 export default function LoginForm() {
   const { login } = useAuthContext();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo") || "/private";
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<{
     email?: string;
@@ -16,7 +18,9 @@ export default function LoginForm() {
     general?: string;
   }>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -40,7 +44,8 @@ export default function LoginForm() {
       setErrors({ general: "Login failed" });
       return;
     }
-    redirect("/private");
+
+    redirect(redirectTo);
   };
 
   return (
