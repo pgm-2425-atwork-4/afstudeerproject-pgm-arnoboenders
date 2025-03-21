@@ -4,7 +4,6 @@ import OrderCard from "./OrderCard";
 
 export default function OrderList() {
   const orders = useOrders();
-  console.log(orders);
   const days = [
     "Sunday",
     "Monday",
@@ -17,7 +16,6 @@ export default function OrderList() {
 
   const today = new Date();
   const todayName = days[today.getDay()]; // returns e.g. "Friday"
-  console.log(todayName);
   const todaysOrders = orders?.filter(
     (order) => order.takeaway_time_slot?.day_of_week === todayName
   );
@@ -37,13 +35,10 @@ export default function OrderList() {
       <ul>
         {todaysOrders
           .sort((a, b) => {
-            if (a.picked_up === b.picked_up) {
-              return (
-                new Date(a.take_away_time).getTime() -
-                new Date(b.take_away_time).getTime()
-              );
-            }
-            return a.picked_up ? 1 : -1;
+            return (
+              new Date(a.take_away_time).getTime() -
+              new Date(b.take_away_time).getTime()
+            );
           })
           .map((order) => (
             <li key={order.id} className="my-4">

@@ -1,4 +1,3 @@
-
 import { supabase } from "@/core/networking/api";
 import { Auth, AuthBody } from "./types";
 
@@ -7,7 +6,6 @@ export const getCurrentSession = async (): Promise<Auth | null> => {
     data: { session },
     error,
   } = await supabase.auth.getSession();
-
   if (error || !session?.user) {
     return null;
   }
@@ -31,10 +29,6 @@ export const login = async ({ email, password }: AuthBody) => {
     return Promise.reject(error);
   }
   return Promise.resolve(data.user);
-};
-
-export const logout = async () => {
-  return supabase.auth.signOut();
 };
 
 export const fetchCurrentUser = async () => {

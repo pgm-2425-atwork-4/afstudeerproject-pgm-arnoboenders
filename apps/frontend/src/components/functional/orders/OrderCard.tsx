@@ -2,7 +2,7 @@
 import { deleteOrder, updateOrderStatus } from "@/modules/order/api";
 import { Order, OrderItem } from "@/modules/order/types";
 import { getTime } from "@/modules/time-slots/api";
-import { Edit, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import InputField from "../input/InputField";
 
@@ -66,9 +66,6 @@ export default function OrderCard({ order }: { order: Order }) {
           )}
       </ul>
       <div className="flex justify-center gap-4 col-span-2">
-        <button className="btn-primary">
-          <Edit />
-        </button>
         <button onClick={() => deleteOrder(order.id)}>
           <Trash2 />
         </button>

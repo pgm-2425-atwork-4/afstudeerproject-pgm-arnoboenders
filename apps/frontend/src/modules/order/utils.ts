@@ -21,25 +21,33 @@ export const useOrders = () => {
         setOrders(fetchedOrders);
       }
     });
+
     const channel = supabase
-    .channel("orders-channel")
-    .on(
+      .channel("orders-channel")
+      .on(
         // @ts-expect-error: Supabase client does not have a strict type for "postgres_changes"
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
-        (payload: OrderPayload) => {
-          setOrders((prevOrders) => {
-            if (payload.eventType === "INSERT") {
-              return [...prevOrders, payload.new];
-            } else if (payload.eventType === "UPDATE") {
-              return prevOrders.map((order) =>
-                order.id === payload.new.id ? payload.new : order
-              );
-            } else if (payload.eventType === "DELETE") {
-              return prevOrders.filter((order) => order.id !== payload.old.id);
-            }
-            return prevOrders;
-          });
+        async (payload: OrderPayload) => {
+          if (
+            payload.eventType === "INSERT" ||
+            payload.eventType === "DELETE"
+          ) {
+            setOrders((prevOrders) => {
+              if (payload.eventType === "INSERT") {
+                return [...prevOrders, payload.new];
+              } else {
+                return prevOrders.filter(
+                  (order) => order.id !== payload.old.id
+                );
+              }
+            });
+          }
+
+          if (payload.eventType === "UPDATE") {
+            const fresh = await fetchOrders(); // <- force refetch
+            if (fresh) setOrders(fresh);
+          }
         }
       )
       .subscribe();
