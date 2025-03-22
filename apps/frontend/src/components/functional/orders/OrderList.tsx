@@ -19,6 +19,13 @@ export default function OrderList() {
   const todaysOrders = orders?.filter(
     (order) => order.takeaway_time_slot?.day_of_week === todayName
   );
+
+  if (!todaysOrders || todaysOrders.length === 0) {
+    return (
+      <h2 className="text-center my-10">Er zijn nog geen bestellingen vandaag.</h2>
+    );
+  }
+
   return (
     <div>
       <div className="grid grid-cols-11 gap-4 items-center p-4 rounded-xl">
