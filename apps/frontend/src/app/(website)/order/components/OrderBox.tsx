@@ -43,8 +43,8 @@ export default function OrderBox({
   return (
     <div
       className={`${
-        layout === "sticky" ? "sticky top-8 gap-4 w-full" : "w-full p-8 gap-8"
-      } flex flex-col justify-center`}
+        layout === "sticky" ? "sticky top-8 gap-4" : "p-8 gap-8"
+      } flex flex-col justify-center w-full`}
     >
       <h2>Bestelling</h2>
       {aggregatedOrders.map(({ id, amount, price, name }) => (

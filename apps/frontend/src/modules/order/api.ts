@@ -67,10 +67,9 @@ export const fetchAvailableTimeSlots = async (): Promise<TimeSlot[]> => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/takeaway-times`
     );
-    if (!response.ok) throw new Error("Failed to fetch time slots");
     return response.json();
   } catch (error) {
-    console.error("Error fetching takeaway times:", error);
+    console.error("Error fetching available time slots:", error);
     return [];
   }
 };
