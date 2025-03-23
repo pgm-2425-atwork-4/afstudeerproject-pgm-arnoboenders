@@ -45,7 +45,22 @@ export default function CreateModal({
   const handleSaveWithImage = async () => {
     if (!newItem) return;
 
-    const validationResult = menuItemSchema.safeParse(newItem);
+    const parsedIngredients =
+      typeof newItem.ingredients === "string"
+        ? newItem.ingredients
+            .split(",")
+            .map((i) => i.trim())
+            .filter(Boolean)
+        : newItem.ingredients;
+
+    const sanitizedItem: CreateMenuItem = {
+      ...newItem,
+      ingredients: parsedIngredients,
+      price: Number(newItem.price),
+      category_id: newItem.category_id.toString(),
+    };
+
+    const validationResult = menuItemSchema.safeParse(sanitizedItem);
     if (!validationResult.success) {
       const errorMessages: Record<string, string> = {};
       validationResult.error.errors.forEach((err) => {
@@ -56,10 +71,13 @@ export default function CreateModal({
     }
 
     try {
-      const createdItem = await createMenuItem(newItem, uploadedImageFile);
+      const createdItem = await createMenuItem(
+        sanitizedItem,
+        uploadedImageFile
+      );
 
       if (createdItem) {
-        updateMenuList(createdItem); // ✅ Update menu list in `EditMenu.tsx`
+        updateMenuList(createdItem);
         setNewItem(createdItem);
         setUploadedImageFile(undefined);
         setIsCreating(false);

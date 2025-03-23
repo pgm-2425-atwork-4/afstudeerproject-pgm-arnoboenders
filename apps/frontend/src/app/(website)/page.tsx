@@ -55,7 +55,8 @@ export default async function Home() {
         </div>
 
         {/* Additional Content */}
-        <div className="grid lg:grid-cols-2 items-center justify-center justify-items-center my-20 gap-8">
+
+        <div className="flex flex-col lg:flex-row items-center justify-between my-20 gap-8">
           <Image
             src="/assets/homeImg1.png"
             alt="Foto interieur"
@@ -71,7 +72,8 @@ export default async function Home() {
               hier
             </Link>
           </p>
-
+        </div>
+        <div className="flex flex-col-reverse lg:flex-row items-center justify-between my-20 gap-8">
           <p className="max-w-md text-xl">
             📍 Geen reservatie nodig Loop gewoon binnen en geniet. Voor groepen
             vanaf 6 personen kan je wel reserveren.
@@ -83,7 +85,8 @@ export default async function Home() {
             height={300}
             className="shadow-xl"
           />
-
+        </div>
+        <div className="flex flex-col lg:flex-row items-center justify-between my-20 gap-8">
           <Image
             src="/assets/homeImg1.png"
             alt="Foto interieur"
