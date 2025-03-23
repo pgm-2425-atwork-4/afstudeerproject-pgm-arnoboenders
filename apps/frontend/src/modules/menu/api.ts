@@ -4,7 +4,6 @@ import { uploadImage } from "../storage/api";
 import { Bucket } from "../storage/types";
 import { redis } from "@/utils/redis/redis";
 
-
 export const getMenuItems = async (): Promise<MenuItem[] | null> => {
   const cacheKey = "menu:items";
 
@@ -15,7 +14,7 @@ export const getMenuItems = async (): Promise<MenuItem[] | null> => {
   }
 
   const { data, error } = await supabase.from("menu").select("*");
-
+  console.log(data);
   if (error || !data) {
     throw error;
   }
@@ -107,6 +106,7 @@ export const updateMenuItem = async (item: Partial<MenuItem>, file?: File) => {
     if (!data || data.length === 0) {
       throw new Error("Update failed: No data returned");
     }
+    await redis.del("menu:items");
 
     return data[0]; // Return the updated menu item
   }
@@ -184,6 +184,7 @@ export const createMenuItem = async (item: CreateMenuItem, file?: File) => {
     if (error) {
       throw new Error(error.message);
     }
+    await redis.del("menu:items");
 
     return data[0]; // Return created menu item
   }
@@ -194,6 +195,7 @@ export const deleteMenuItem = async (item_id: string) => {
   if (error) {
     throw new Error(error.message);
   }
+  await redis.del("menu:items");
 };
 
 export const getMenuImage = async () => {
