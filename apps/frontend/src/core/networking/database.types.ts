@@ -43,7 +43,6 @@ export type Database = {
           ingredients: Json | null
           is_new: boolean
           name: string
-          order_number: number
           pasta: Json | null
           price: number
           show_on_menu: boolean
@@ -60,7 +59,6 @@ export type Database = {
           ingredients?: Json | null
           is_new?: boolean
           name: string
-          order_number?: number
           pasta?: Json | null
           price: number
           show_on_menu?: boolean
@@ -77,7 +75,6 @@ export type Database = {
           ingredients?: Json | null
           is_new?: boolean
           name?: string
-          order_number?: number
           pasta?: Json | null
           price?: number
           show_on_menu?: boolean
