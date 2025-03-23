@@ -16,12 +16,7 @@ export default function PaymentSuccess() {
       )
         .then((res) => res.json())
         .then((data) => {
-          console.log("Payment verification response:", data);
           if (data.success && data.orderId) {
-            console.log(
-              "✅ Redirecting to confirmation with orderId:",
-              data.orderId
-            );
             router.push(`/order/confirmation?orderId=${data.orderId}`);
           } else {
             console.error("❌ No orderId received:", data);

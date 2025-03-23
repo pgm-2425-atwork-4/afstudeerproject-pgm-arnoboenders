@@ -1,3 +1,4 @@
+import AuthProvider from "@/components/context/AuthProvider";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,5 +11,5 @@ export default function PrivateLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <> {children}</>; // No nav, no footer
+  return <AuthProvider> {children}</AuthProvider>; // No nav, no footer
 }

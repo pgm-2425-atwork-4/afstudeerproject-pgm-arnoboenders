@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import "@/app/globals.css";
-import AuthProvider from "@/components/context/AuthProvider";
+import { OrderProvider } from "@/components/context/OrderProvider";
 
 export const metadata: Metadata = {
   title: "Loos-merchtem",
@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="nl">
       <body className={` antialiased`}>
-        <AuthProvider>{children}</AuthProvider>
+        <OrderProvider>{children}</OrderProvider>
       </body>
     </html>
   );
