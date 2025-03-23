@@ -24,9 +24,24 @@ export const createOrder = async (
 };
 
 export async function updateOrderStatus(orderId: number, pickedUp: boolean) {
+  // Step 1: fetch current order
+  const { data: existingOrder, error: fetchError } = await supabase
+    .from("orders")
+    .select("paid")
+    .eq("id", orderId)
+    .single();
+
+  if (fetchError) throw fetchError;
+
+  const currentPaid = existingOrder?.paid ?? false;
+
+  // Step 2: update with new values
   const { data, error } = await supabase
     .from("orders")
-    .update({ picked_up: pickedUp })
+    .update({
+      picked_up: pickedUp,
+      paid: !currentPaid,
+    })
     .eq("id", orderId)
     .select();
 
@@ -67,10 +82,9 @@ export const fetchAvailableTimeSlots = async (): Promise<TimeSlot[]> => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/takeaway-times`
     );
-    if (!response.ok) throw new Error("Failed to fetch time slots");
     return response.json();
   } catch (error) {
-    console.error("Error fetching takeaway times:", error);
+    console.error("Error fetching available time slots:", error);
     return [];
   }
 };

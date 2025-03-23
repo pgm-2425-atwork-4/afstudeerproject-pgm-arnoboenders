@@ -2,12 +2,27 @@ import { supabase } from "@/core/networking/api";
 import { CreateMenuItem, MenuCategory, MenuItem } from "./types";
 import { uploadImage } from "../storage/api";
 import { Bucket } from "../storage/types";
+import { redis } from "@/utils/redis/redis";
+
 
 export const getMenuItems = async (): Promise<MenuItem[] | null> => {
+  const cacheKey = "menu:items";
+
+  // First, try to get from cache
+  const cached = await redis.get<MenuItem[]>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const { data, error } = await supabase.from("menu").select("*");
-  if (error) {
+
+  if (error || !data) {
     throw error;
   }
+
+  // Save to Redis with TTL of 10 minutes
+  await redis.set(cacheKey, data, { ex: 600 });
+
   return data;
 };
 
@@ -29,7 +44,6 @@ export const updateMenuItem = async (item: Partial<MenuItem>, file?: File) => {
   let fileName: string | null = item.image ?? null;
   if (file) {
     fileName = `${Date.now()}-menu-item-image.jpg`; // Ensure fileName is a string
-    console.log("fileName", fileName);
     // If a new file is provided, upload it first and update with the new filename
     const reader = new FileReader();
     return new Promise<Partial<MenuItem>>((resolve, reject) => {

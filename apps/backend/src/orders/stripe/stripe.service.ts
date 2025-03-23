@@ -15,6 +15,8 @@ interface OrderData {
   phone_number: string;
   take_away_time: string;
   order_data: OrderItem[];
+  price?: number;
+  paid?: boolean;
 }
 
 interface OrderItem {
@@ -46,6 +48,7 @@ export class StripeService {
           phone_number: orderData.phone_number,
           take_away_time: orderData.take_away_time,
           order_data: JSON.stringify(orderData.order_data), // Store order data as a string
+          paid: 'true',
         },
       });
 

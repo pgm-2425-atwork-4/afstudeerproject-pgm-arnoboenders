@@ -9,6 +9,14 @@ import {
   setMinutes,
   setSeconds,
 } from 'date-fns';
+import Redis from 'ioredis';
+
+const redis = new Redis({
+  host: process.env.REDIS_HOST,
+  port: 6379,
+  password: process.env.REDIS_PASSWORD,
+  tls: {}, // Required for Supabase Redis
+});
 
 dotenv.config();
 
@@ -35,7 +43,6 @@ interface Order {
 @Injectable()
 export class TakeawayService {
   async getTimeSlotById(slotId: number): Promise<TakeawaySlot | null> {
-    console.log('Fetching takeaway slot with ID:', slotId);
     const { data, error } = await supabase
       .from('takeaway_time_slots')
       .select('*')
@@ -46,16 +53,21 @@ export class TakeawayService {
       console.error('❌ Error fetching takeaway slot:', error);
       return null;
     }
-    console.log(data);
     return data;
   }
 
   async getNextAvailableTimes(): Promise<TakeawaySlot[]> {
     const now = new Date();
-    now.setHours(now.getHours()); // Adjust for time difference if needed
-    const today = format(now, 'EEEE'); // Get current day (e.g., "Wednesday")
+    const today = format(now, 'EEEE');
+    const cacheKey = `timeslots:${today}`;
 
-    // Fetch today's available takeaway slots
+    // Check Redis cache first
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      return JSON.parse(cached) as TakeawaySlot[];
+    }
+
+    // Your existing logic to fetch from Supabase...
     const { data: slots, error } = await supabase
       .from('takeaway_time_slots')
       .select('id, time_slot, current_orders, max_orders')
@@ -71,7 +83,6 @@ export class TakeawayService {
     const availableSlots: TakeawaySlot[] = [];
 
     for (const slot of slots as TakeawaySlot[]) {
-      // Convert `HH:mm` string from DB to a Date object
       const [hours, minutes] = slot.time_slot.split(':').map(Number);
       const slotTime = setSeconds(
         setMinutes(setHours(new Date(), hours), minutes),
@@ -80,25 +91,18 @@ export class TakeawayService {
 
       if (isAfter(slotTime, now) && slot.current_orders < slot.max_orders) {
         const minutesUntilSlot = differenceInMinutes(slotTime, now);
-
-        if (minutesUntilSlot < 30) {
-          // If it's less than 30 minutes from now, skip this slot
-          continue;
+        if (minutesUntilSlot >= 30) {
+          availableSlots.push(slot);
         }
-
-        // Push full slot object instead of just formatted time
-        availableSlots.push({
-          id: slot.id,
-          time_slot: slot.time_slot, // Keep as "HH:mm"
-          current_orders: slot.current_orders,
-          max_orders: slot.max_orders,
-        });
       }
     }
 
     if (availableSlots.length === 0) {
       throw new BadRequestException('No valid takeaway slots available today');
     }
+
+    // Save to Redis for 5 minutes
+    await redis.set(cacheKey, JSON.stringify(availableSlots), 'EX', 300);
 
     return availableSlots;
   }
@@ -153,6 +157,8 @@ export class TakeawayService {
       .update({ current_orders: newOrdersCount })
       .eq('day_of_week', today)
       .eq('time_slot', timeSlot.time_slot);
+
+    await redis.del(`timeslots:${format(new Date(), 'EEEE')}`);
 
     if (updateError) throw new BadRequestException(updateError.message);
   }

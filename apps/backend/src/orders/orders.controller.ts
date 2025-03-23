@@ -24,32 +24,14 @@ interface OrderData {
   phone_number: string;
   take_away_time: number; // Changed from string to number
   order_data: OrderItem[];
+  price?: number;
+  paid?: boolean;
 }
 
 interface OrderItem {
   name: string;
   price: number;
   amount: number;
-}
-
-interface StripeMetadata {
-  name: string;
-  phone_number: string;
-  take_away_time: string;
-  order_data: string;
-}
-
-/**
- * Stripe Webhook Event Type
- */
-interface StripeEvent {
-  type: string;
-  data: {
-    object: {
-      metadata?: StripeMetadata;
-      amount_total: number;
-    };
-  };
 }
 
 @Controller('orders')
@@ -82,9 +64,8 @@ export class OrdersController {
   ) {
     let event: Stripe.Event;
     try {
-      // 🚀 Fix: Ensure `request.body` is a Buffer
       event = stripe.webhooks.constructEvent(
-        request.body, // MUST BE A BUFFER
+        request.body, // Use rawBody from body-parser config
         signature,
         process.env.STRIPE_WEBHOOK_SECRET!,
       );
@@ -95,43 +76,35 @@ export class OrdersController {
 
     if (event.type === 'checkout.session.completed') {
       try {
-        // Ensure metadata exists before accessing it
         const metadata = event.data.object.metadata;
+
         if (!metadata) {
-          console.error('❌ Missing metadata in Stripe session.');
-          return { success: false, message: 'Missing order metadata' };
+          console.error('❌ No metadata');
+          return response
+            .status(400)
+            .send({ success: false, message: 'No metadata' });
         }
 
-        if (!metadata.take_away_time) {
-          console.error('❌ Missing takeaway time in metadata.');
-          return { success: false, message: 'Missing takeaway time' };
-        }
-
-        // Convert `take_away_time` to a number
         const takeawayTimeId = parseInt(metadata.take_away_time, 10);
-        if (isNaN(takeawayTimeId)) {
-          console.error(
-            '❌ Invalid takeaway time format:',
-            metadata.take_away_time,
-          );
-          return { success: false, message: 'Invalid takeaway time format' };
-        }
 
-        // Fetch the full TakeawaySlot object
         const takeawaySlot =
           await this.takeawayService.getTimeSlotById(takeawayTimeId);
         if (!takeawaySlot) {
-          console.error('❌ Takeaway slot not found:', takeawayTimeId);
-          return { success: false, message: 'Invalid takeaway time slot' };
+          console.error('❌ Invalid takeaway time ID');
+          return response
+            .status(400)
+            .send({ success: false, message: 'Invalid takeaway time ID' });
         }
 
-        // Create order in database (auto-generates `orderId`)
+        const parsedOrderData = JSON.parse(metadata.order_data);
+
         const orderData = {
           name: metadata.name,
           phone_number: metadata.phone_number,
-          take_away_time: takeawaySlot.id, // Use correct takeaway slot ID
+          take_away_time: takeawaySlot.id,
           order_data: JSON.parse(metadata.order_data) as OrderItem[],
-          price: event.data.object.amount_total! / 100, // Convert from cents
+          price: event.data.object.amount_total! / 100,
+          paid: metadata.paid === 'true',
         };
 
         const createdOrder = await this.ordersService.createOrder(orderData);
@@ -141,12 +114,9 @@ export class OrdersController {
           return { success: false, message: 'Failed to create order' };
         }
 
-        // Retrieve the generated orderId (auto-incremented)
         const orderId: string = createdOrder[0].id;
 
-        // Assign order to the takeaway slot
         await this.takeawayService.assignOrderToTimeSlot(takeawaySlot, orderId);
-        // Return a successful response
         return response.status(200).send({ success: true });
       } catch (error) {
         console.error('❌ Error processing order:', error);
@@ -156,6 +126,47 @@ export class OrdersController {
 
     console.log(`⚠️ Unhandled event type: ${event.type}`);
     return { success: false, message: 'Unhandled event type' };
+  }
+
+  @Post('save-unpaid-order')
+  async saveUnpaidOrder(@Body() orderData: OrderData & { paid?: boolean }) {
+    const {
+      order_data,
+      take_away_time,
+      name,
+      phone_number,
+      paid = false,
+    } = orderData;
+
+    const takeawaySlot =
+      await this.takeawayService.getTimeSlotById(take_away_time);
+    if (!takeawaySlot) {
+      return { success: false, message: 'Ongeldige afhaaltijd' };
+    }
+
+    const totalPrice = order_data.reduce((sum, item) => sum + item.price, 0);
+
+    const createdOrder = await this.ordersService.createOrder({
+      name,
+      phone_number,
+      take_away_time: take_away_time.toString(),
+      order_data,
+      price: totalPrice,
+      paid,
+    });
+
+    if (!createdOrder || createdOrder.length === 0) {
+      return {
+        success: false,
+        message: 'Bestelling kon niet worden aangemaakt',
+      };
+    }
+
+    const orderId: string = createdOrder[0].id;
+
+    await this.takeawayService.assignOrderToTimeSlot(takeawaySlot, orderId);
+
+    return { success: true, orderId };
   }
 
   /**

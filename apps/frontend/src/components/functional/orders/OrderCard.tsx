@@ -2,7 +2,7 @@
 import { deleteOrder, updateOrderStatus } from "@/modules/order/api";
 import { Order, OrderItem } from "@/modules/order/types";
 import { getTime } from "@/modules/time-slots/api";
-import { Trash2 } from "lucide-react";
+import { BadgeCheck, BadgeX, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import InputField from "../input/InputField";
 
@@ -35,8 +35,8 @@ export default function OrderCard({ order }: { order: Order }) {
 
   return (
     <div
-      className={`grid grid-cols-11 gap-4 items-center p-4 rounded-xl shadow-lg transition ${
-      pickedUp ? "bg-green-200 opacity-50" : "bg-primary50"
+      className={`grid grid-cols-12 gap-4 items-center p-4 rounded-xl shadow-lg transition ${
+        pickedUp ? "bg-green-200 opacity-50" : "bg-primary50"
       }`}
     >
       <div className="flex justify-center">
@@ -65,6 +65,13 @@ export default function OrderCard({ order }: { order: Order }) {
               )
           )}
       </ul>
+      <p className="flex justify-center">
+        {order.paid ? (
+          <BadgeCheck className="text-green-500" />
+        ) : (
+          <BadgeX className="text-red-500" />
+        )}
+      </p>
       <div className="flex justify-center gap-4 col-span-2">
         <button onClick={() => deleteOrder(order.id)}>
           <Trash2 />
