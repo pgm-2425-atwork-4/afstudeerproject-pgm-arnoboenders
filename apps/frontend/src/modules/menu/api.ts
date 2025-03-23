@@ -14,7 +14,6 @@ export const getMenuItems = async (): Promise<MenuItem[] | null> => {
   }
 
   const { data, error } = await supabase.from("menu").select("*");
-  console.log(data);
   if (error || !data) {
     throw error;
   }
