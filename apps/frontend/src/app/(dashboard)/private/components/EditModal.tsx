@@ -49,9 +49,6 @@ export default function EditModal({
       const sanitizedItem = {
         ...selectedItem,
         price: selectedItem.price ? Number(selectedItem.price) : 0, // Ensure number
-        order_number: selectedItem.order_number
-          ? Number(selectedItem.order_number)
-          : undefined, // Optional
         category_id: selectedItem.category_id?.toString() || "", // Ensure it's a string
       };
 
@@ -207,20 +204,6 @@ export default function EditModal({
               id="veggie"
               placeholder=""
               value={selectedItem.veggie.toString()}
-            />
-            <InputField
-              label="Volgorde"
-              type="number"
-              value={selectedItem.order_number.toString()}
-              onChange={(e) =>
-                setSelectedItem({
-                  ...selectedItem,
-                  order_number: parseInt(e.target.value),
-                })
-              }
-              placeholder={selectedItem.order_number.toString()}
-              id="order_number"
-              name="order_number"
             />
             <div className="flex justify-between mt-4 gap-4">
               <Button
