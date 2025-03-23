@@ -101,7 +101,8 @@ export default function OrderBox({
                 Bestellen is momenteel niet mogelijk. Bekijk{" "}
                 <Link
                   href={"/contact"}
-                  className="text-primary hover:underline hover:text-primary600"
+                    className="text-primary hover:underline hover:text-primary600"
+                    title="Contact"
                 >
                   hier
                 </Link>{" "}
