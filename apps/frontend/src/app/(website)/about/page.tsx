@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Loos-merchtem | Over ons",
-  description: "Website loos merchtem",
+  description: "Meer over loos merchtem",
 };
 
 export default function About() {

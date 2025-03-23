@@ -5,7 +5,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Loos-backoffice | Bestellingen",
-  description: "Backoffice loos merchtem",
+  description: "Overzicht van alle bestellingen",
 };
 
 export default function OrderOverviewPage() {

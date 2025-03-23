@@ -5,7 +5,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Loos-backoffice | Login",
-  description: "Backoffice loos merchtem",
+  description: "Login to the backoffice",
 };
 
 export default async function LoginPage() {
