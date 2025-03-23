@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Loos-merchtem | Privacy & Cookies",
-  description: "Website loos merchtem",
+  description: "Privacy en cookies van loos merchtem",
 };
 
 export default function PrivacyCookies() {

@@ -34,7 +34,7 @@ export default function Navigation() {
       >
         <div className="max-w-screen-xl mx-auto px-4 sm:px-6 flex justify-between items-center w-full py-4 relative z-50">
           <div className={`flex items-center gap-4 sm:gap-8 `}>
-            <Link href="/">
+            <Link href="/" title="Loos Merchtem">
               <Image
                 src="/Loos_logo_dark.png"
                 alt="logo"
@@ -49,7 +49,7 @@ export default function Navigation() {
 
           {/* Right Section - Order Button & Mobile Menu */}
           <div className="flex items-center gap-4 sm:gap-6 flex-shrink-0 sm:px-4 relative">
-            <Link href="/order">
+            <Link href="/order" title="Bestel nu">
               <Button number={totalOrders} text="Bestel nu" />
             </Link>
 
@@ -86,19 +86,19 @@ export default function Navigation() {
 
 const NavLinks = () => (
   <div className="flex gap-4 sm:gap-6 nav-links">
-    <Link className="hover:text-primary500" href="/menu">
+    <Link className="hover:text-primary500" href="/menu" title="Bekijk ons menu">
       Menu
     </Link>
-    <Link className="hover:text-primary500" href="/about">
+    <Link className="hover:text-primary500" href="/about" title="Over ons">
       Over ons
     </Link>
-    <Link className="hover:text-primary500" href="/eat-wise">
+    <Link className="hover:text-primary500" href="/eat-wise" title="Eat Wise">
       Eat Wise
     </Link>
-    <Link className="hover:text-primary500" href="/vacancy">
+    <Link className="hover:text-primary500" href="/vacancy" title="Vacature">
       Vacature
     </Link>
-    <Link className="hover:text-primary500" href="/contact">
+    <Link className="hover:text-primary500" href="/contact" title="Contact">
       Contact
     </Link>
   </div>

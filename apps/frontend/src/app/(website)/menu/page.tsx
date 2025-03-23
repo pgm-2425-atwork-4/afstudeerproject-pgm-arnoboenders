@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Loos-merchtem | Menu",
-  description: "Website loos merchtem",
+  description: "Bekijk het menu van loos merchtem",
 };
 
 export default async function Menu() {

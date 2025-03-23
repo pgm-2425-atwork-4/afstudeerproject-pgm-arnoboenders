@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Loos-merchtem | Vacature",
-  description: "Website loos merchtem",
+  description: "Vacature bij loos merchtem",
 };
 
 export default function About() {
@@ -28,12 +28,17 @@ export default function About() {
               <Link
                 className="hover:text-primary"
                 href="mailto:info@loos-merchtem.be"
+                title="Mail ons"
               >
                 info@loos-merchtem.be
               </Link>{" "}
               <br />
               tel.:{" "}
-              <Link className="hover:text-primary" href="tel:0477/55.76.30">
+              <Link
+                className="hover:text-primary"
+                href="tel:0477/55.76.30"
+                title="Bel ons"
+              >
                 0477/55.76.30
               </Link>
             </p>
