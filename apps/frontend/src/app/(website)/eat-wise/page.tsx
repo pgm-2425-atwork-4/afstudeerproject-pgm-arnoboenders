@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Loos-merchtem | Over Eat Wise",
-  description: "Website loos merchtem",
+  description: "Meer over Eat Wise",
 };
 
 export default function About() {

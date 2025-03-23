@@ -4,7 +4,7 @@ import OrderMenu from "./components/OrderMenu";
 
 export const metadata: Metadata = {
   title: "Loos-merchtem | Bestel",
-  description: "Website loos merchtem",
+  description: "Bestel bij loos merchtem",
 };
 
 export default function OrderPage() {
