@@ -46,10 +46,21 @@ export default function EditModal({
 
   const handleSaveWithImage = async () => {
     if (selectedItem) {
+      const ingredientsArray =
+        typeof selectedItem.ingredients === "string"
+          ? selectedItem.ingredients
+              .split(",")
+              .map((i) => i.trim())
+              .filter(Boolean)
+          : selectedItem.ingredients;
+
+      console.log(ingredientsArray);
+
       const sanitizedItem = {
         ...selectedItem,
         price: selectedItem.price ? Number(selectedItem.price) : 0, // Ensure number
         category_id: selectedItem.category_id?.toString() || "", // Ensure it's a string
+        ingredients: ingredientsArray,
       };
 
       // Validate using Zod

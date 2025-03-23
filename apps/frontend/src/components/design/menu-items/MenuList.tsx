@@ -4,7 +4,7 @@ import { getCategories } from "@/modules/menu/api";
 
 export default async function MenuList({ items }: { items: MenuItem[] }) {
   const categories = await getCategories();
-
+  console.log(items);
   return (
     <div>
       {categories &&
