@@ -144,7 +144,6 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
                 is_new: false,
                 veggie: false,
                 category_id: "",
-                order_number: 0,
                 image: "",
                 pasta: "",
                 show_on_menu: true,
@@ -163,7 +162,6 @@ export default function EditMenu({ owner_id }: { owner_id: string }) {
               <h2>{category.name}</h2>
               {menuItems
                 .filter((item) => item.category_id === category.id)
-                .sort((a, b) => a.order_number - b.order_number)
                 .map((item) => (
                   <MenuItemBackOffice
                     key={item.id}
