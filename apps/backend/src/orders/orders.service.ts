@@ -8,9 +8,18 @@ const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+interface CreateOrderInput {
+  name: string;
+  phone_number: string;
+  take_away_time: string;
+  order_data: any;
+  price: number;
+  paid: boolean;
+}
+
 @Injectable()
 export class OrdersService {
-  async createOrder(orderData): Promise<any[]> {
+  async createOrder(orderData: CreateOrderInput): Promise<any[]> {
     const { data, error } = await supabase
       .from('orders')
       .insert(orderData)

@@ -150,6 +150,7 @@ export type Database = {
           id: number
           name: string
           order_data: Json
+          paid: boolean
           phone_number: string
           picked_up: boolean
           price: number
@@ -161,6 +162,7 @@ export type Database = {
           id?: number
           name: string
           order_data: Json
+          paid?: boolean
           phone_number: string
           picked_up?: boolean
           price: number
@@ -172,6 +174,7 @@ export type Database = {
           id?: number
           name?: string
           order_data?: Json
+          paid?: boolean
           phone_number?: string
           picked_up?: boolean
           price?: number
@@ -220,7 +223,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      fix_all_orders: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

@@ -44,7 +44,6 @@ export const updateMenuItem = async (item: Partial<MenuItem>, file?: File) => {
   let fileName: string | null = item.image ?? null;
   if (file) {
     fileName = `${Date.now()}-menu-item-image.jpg`; // Ensure fileName is a string
-    console.log("fileName", fileName);
     // If a new file is provided, upload it first and update with the new filename
     const reader = new FileReader();
     return new Promise<Partial<MenuItem>>((resolve, reject) => {

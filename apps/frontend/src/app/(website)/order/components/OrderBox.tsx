@@ -9,7 +9,7 @@ import { Trash2 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useState } from "react";
 import { useTimeSlots } from "./useTimeSlots";
-import { handleOrderSubmit } from "../actions/orderActions";
+import { handleOrderSubmit, SubmitOrderProps } from "../actions/orderActions";
 import { Pasta, Size } from "@/modules/menu/types";
 import InputField from "@/components/functional/input/InputField";
 import Link from "next/link";
@@ -18,12 +18,17 @@ interface OrderBoxProps {
   layout?: "sticky" | "fullwidth";
   showForm?: boolean;
   buttonText?: string;
+  onSubmitOverride?: (
+    props: SubmitOrderProps & { event: React.FormEvent }
+  ) => void;
 }
+
 
 export default function OrderBox({
   layout = "sticky",
   showForm = false,
   buttonText = "Bestel",
+  onSubmitOverride,
 }: OrderBoxProps) {
   const { orders: rawOrders, removeOrder } = useOrders();
   const orders: OrderItem[] = rawOrders.map((order) => ({
@@ -93,7 +98,13 @@ export default function OrderBox({
               ))
             ) : (
               <p>
-                Bestellen is momenteel niet mogelijk. Bekijk <Link href={'/contact'} className="text-primary hover:underline hover:text-primary600">hier</Link>{" "}
+                Bestellen is momenteel niet mogelijk. Bekijk{" "}
+                <Link
+                  href={"/contact"}
+                  className="text-primary hover:underline hover:text-primary600"
+                >
+                  hier
+                </Link>{" "}
                 de openingsuren
               </p>
             )}
@@ -106,7 +117,8 @@ export default function OrderBox({
           onSubmit={(e) => {
             e.preventDefault();
             setError(null); // Clear previous errors
-            handleOrderSubmit({
+
+            const props: SubmitOrderProps & { event: React.FormEvent } = {
               event: e,
               aggregatedOrders,
               selectedTime,
@@ -114,7 +126,13 @@ export default function OrderBox({
               customerName,
               phoneNumber,
               setError,
-            });
+            };
+
+            if (onSubmitOverride) {
+              onSubmitOverride(props);
+            } else {
+              handleOrderSubmit(props);
+            }
           }}
           className="flex flex-col gap-4"
         >

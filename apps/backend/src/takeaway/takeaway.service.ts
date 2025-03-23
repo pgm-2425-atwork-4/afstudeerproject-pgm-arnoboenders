@@ -53,7 +53,6 @@ export class TakeawayService {
       console.error('❌ Error fetching takeaway slot:', error);
       return null;
     }
-    console.log(data);
     return data;
   }
 

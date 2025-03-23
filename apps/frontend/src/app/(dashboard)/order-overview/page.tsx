@@ -1,5 +1,6 @@
 import LogoutButton from "@/components/functional/button/LogoutButton";
 import OrderList from "@/components/functional/orders/OrderList";
+import AddOrderModal from "@/components/functional/orders/AddOrderModal";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,6 +15,8 @@ export default function OrderOverviewPage() {
         <h1>Bestellingen</h1>
         <LogoutButton />
       </div>
+
+      <AddOrderModal />
       <OrderList />
     </div>
   );
